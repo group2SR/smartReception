@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace smartReception
 {
@@ -9,14 +10,13 @@ namespace smartReception
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string NIN { get; set; }
-        // Changed to string to resolve CS0029 at line 115 in entry.xaml.cs
         public string FloorID { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
 
-        public string Initials => $"{(string.IsNullOrEmpty(FullName) ? "" : FullName.Split(' ')[0][0].ToString())}" +
-            $"{(FullName.Contains(" ") ? FullName.Split(' ')[1][0].ToString() : "")}";
+        public string Initials => string.IsNullOrWhiteSpace(FullName) ? "??" :
+            string.Join("", FullName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s[0])).ToUpper();
 
-        public string DateRange => $"{startDate:dd MMM} - {endDate:dd MMM}";
+        public string DateRange => $"{startDate:MMM dd, yyyy} - {endDate:MMM dd, yyyy}";
     }
 }

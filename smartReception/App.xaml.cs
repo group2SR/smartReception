@@ -60,7 +60,7 @@ namespace smartReception
                 if (rootFrame.Content == null)
                 {
                     // CHANGE THIS LINE to show your new UI
-                    rootFrame.Navigate(typeof(dashboard), e.Arguments);
+                    rootFrame.Navigate(typeof(entry), e.Arguments);
                 }
                 Window.Current.Activate();
             }
