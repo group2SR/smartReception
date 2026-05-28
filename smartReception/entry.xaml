@@ -1,0 +1,126 @@
+﻿<Page
+    x:Class="smartReception.entry"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:smartReception"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" 
+    Background="#F0F2F5">
+
+    <Page.Resources>
+        <Style TargetType="TextBlock" x:Key="HeaderTextStyle">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="DarkGreen" Padding="30,20">
+            <StackPanel>
+                <TextBlock Text="SMART RECEPTION" FontSize="26" FontWeight="Bold" Foreground="White" CharacterSpacing="100"/>
+                <TextBlock Text="Visitor Management &amp; Cloud Sync" Foreground="#B0C4B1" FontSize="12"/>
+            </StackPanel>
+        </Border>
+
+        <Pivot x:Name="rootPivot" Grid.Row="1">
+            <PivotItem Header="REGISTRATION">
+                <Grid Background="#F8F9FA">
+                    <ScrollViewer VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Border Background="White" CornerRadius="15" Padding="40" BorderBrush="#E0E0E0" BorderThickness="1" MinWidth="480">
+                            <StackPanel Spacing="15">
+                                <TextBlock Text="Client Registration" FontSize="22" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+                                <StackPanel>
+                                    <TextBlock Text="First Name" Style="{StaticResource HeaderTextStyle}"/>
+                                    <TextBox Text="{Binding FirstName, Mode=TwoWay}" Foreground="Black" PlaceholderText="Enter first name"/>
+                                </StackPanel>
+
+                                <StackPanel>
+                                    <TextBlock Text="Last Name" Style="{StaticResource HeaderTextStyle}"/>
+                                    <TextBox Text="{Binding LastName, Mode=TwoWay}" Foreground="Black" PlaceholderText="Enter last name"/>
+                                </StackPanel>
+
+                                <StackPanel>
+                                    <TextBlock Text="Email Address" Style="{StaticResource HeaderTextStyle}"/>
+                                    <TextBox Text="{Binding Email, Mode=TwoWay}" Foreground="Black" PlaceholderText="example@domain.com"/>
+                                </StackPanel>
+
+                                <StackPanel>
+                                    <TextBlock Text="NIN (National ID)" Style="{StaticResource HeaderTextStyle}"/>
+                                    <TextBox Text="{Binding NIN, Mode=TwoWay}" Foreground="Black" MaxLength="14" PlaceholderText="14-character ID"/>
+                                </StackPanel>
+
+                                <StackPanel>
+                                    <TextBlock Text="Floor Designation" Style="{StaticResource HeaderTextStyle}"/>
+                                    <ComboBox x:Name="cmbfloor" HorizontalAlignment="Stretch" Foreground="Black">
+                                        <ComboBoxItem Content="1st Floor" Foreground="Black"/>
+                                        <ComboBoxItem Content="2nd Floor" Foreground="Black"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <Grid ColumnSpacing="15">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Start Date" Style="{StaticResource HeaderTextStyle}"/>
+                                        <CalendarDatePicker Date="{Binding StartDate, Mode=TwoWay}" Foreground="Black" HorizontalAlignment="Stretch"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="End Date" Style="{StaticResource HeaderTextStyle}"/>
+                                        <CalendarDatePicker Date="{Binding EndDate, Mode=TwoWay}" Foreground="Black" HorizontalAlignment="Stretch"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Button Content="SYNC TO CLOUD" Click="btnSave" Background="DarkGreen" Foreground="White" 
+                                        HorizontalAlignment="Stretch" Height="50" FontSize="16" FontWeight="Bold" CornerRadius="8" Margin="0,15,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </ScrollViewer>
+                </Grid>
+            </PivotItem>
+
+            <PivotItem Header="CLIENT DATABASE">
+                <ListView ItemsSource="{x:Bind Clients, Mode=OneWay}" Padding="20">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="local:ClientDisplayModel">
+                            <Border Background="White" Margin="0,0,0,12" Padding="20" CornerRadius="10" BorderBrush="#EEE" BorderThickness="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid Width="45" Height="45">
+                                        <Ellipse Fill="#E8F5E9"/>
+                                        <TextBlock Text="{x:Bind Initials}" Foreground="DarkGreen" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    </Grid>
+
+                                    <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text="{x:Bind FullName}" FontWeight="Bold" Foreground="Black" FontSize="18"/>
+                                        <TextBlock Text="{x:Bind Email}" Foreground="Black" FontSize="14"/>
+                                        <TextBlock Text="{x:Bind DateRange}" Foreground="DarkGreen" FontSize="12" FontWeight="SemiBold"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="15" VerticalAlignment="Center">
+                                        <Button Content="Edit" Click="btnEdit_Click" CommandParameter="{x:Bind clientID}" Foreground="DarkGreen" Background="Transparent" FontWeight="SemiBold"/>
+                                        <Button Content="Delete" Click="btnDelete_Click" CommandParameter="{x:Bind clientID}" Foreground="Red" Background="Transparent" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </PivotItem>
+        </Pivot>
+    </Grid>
+</Page>
