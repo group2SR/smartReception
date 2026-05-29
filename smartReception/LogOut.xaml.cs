@@ -26,5 +26,12 @@ namespace smartReception
         {
             this.InitializeComponent();
         }
+
+        private void cancelbtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (Frame.CanGoBack) {
+                Frame.GoBack();
+            }
+        }
     }
 }

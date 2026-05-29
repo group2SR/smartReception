@@ -26,5 +26,15 @@ namespace smartReception
         {
             this.InitializeComponent();
         }
+
+        private void logoutbtn_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(LogOut));
+        }
+
+        private void settingsbackbtn_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(UsersReceptionist));
+        }
     }
 }

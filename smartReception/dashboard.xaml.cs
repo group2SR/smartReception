@@ -175,5 +175,16 @@ namespace smartReception
 
         private void OnPropertyChanged(string name) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        private void repentryclientsbtn_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Access_Control));
+        }
+
+        private void receptionistdashbordbackbtn_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(reception));
+
+        }
     }
 }

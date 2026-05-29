@@ -82,6 +82,9 @@
 
                                 <Button Content="SYNC TO CLOUD" Click="btnSave" Background="DarkGreen" Foreground="White" 
                                         HorizontalAlignment="Stretch" Height="50" FontSize="16" FontWeight="Bold" CornerRadius="8" Margin="0,15,0,0"/>
+                                <Button Content=" View General Reports" Background="DarkGreen" Foreground="White" CornerRadius="10" x:Name="generalreportsbtn" Click="generalreportsbtn_Click" />
+                                <AppBarButton Icon="Back" Label="back"
+                                              x:Name="backbtnentry" Click="backbtnentry_Click"/>
                             </StackPanel>
                         </Border>
                     </ScrollViewer>

@@ -194,5 +194,17 @@ namespace smartReception
         {
             await new MessageDialog(v, "Smart Reception System").ShowAsync();
         }
+
+      
+        private void generalreportsbtn_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Reports));
+        }
+
+        private void backbtnentry_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(MasterDashboard));
+
+        }
     }
 }

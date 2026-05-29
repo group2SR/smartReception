@@ -88,6 +88,11 @@
                         <TextBox Header="NIN / ID Number" PlaceholderText="CM123..." x:Name="txtNIN" Foreground="Black"/>
 
                         <Button Content="SAVE CLIENT" Click="btnSubmit_Click" Background="#2E7D32" Foreground="White" Width="200" Height="45" HorizontalAlignment="Right" FontWeight="Bold"/>
+                        <Button Content="Access clients Data" x:Name="repentryclientsbtn" Background="#2E7D32" Foreground="White" Width="200" Height="45" HorizontalAlignment="Right" FontWeight="Bold" Click="repentryclientsbtn_Click"
+                                />
+                        <AppBarButton Icon="back" Label="back" HorizontalAlignment="Right"  x:Name="receptionistdashbordbackbtn" Click="receptionistdashbordbackbtn_Click"/>
+
+
                     </StackPanel>
                 </Border>
 

@@ -42,5 +42,10 @@ namespace smartReception
         {
             ((UIElement)sender).Opacity = 1;
         }
+
+        private void ReceptionistLogin_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(dashboard));
+        }
     }
 }

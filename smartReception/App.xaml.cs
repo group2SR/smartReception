@@ -68,7 +68,7 @@ namespace smartReception
                 if (rootFrame.Content == null)
                 {
                     await EnsureSupabaseInitializedAsync();
-                    rootFrame.Navigate(typeof(MasterDashboard), e.Arguments);
+                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
 
                 }
                 Window.Current.Activate();

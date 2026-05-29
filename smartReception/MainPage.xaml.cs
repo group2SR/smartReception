@@ -46,5 +46,10 @@ namespace smartReception
                 card.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 243, 244, 246));
             }
         }
+
+        private void adminloginbtn_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(MasterDashboard));
+        }
     }
 }

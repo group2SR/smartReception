@@ -323,6 +323,16 @@ namespace smartReception
             };
             await dialog.ShowAsync();
         }
+
+        private void enterclientsbtn_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(entry));
+        }
+
+        private void backbtnMD_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(MainPage));
+        }
     }
 
     // ── DISPLAY MODEL CLASSES ──────────────────────────────────────────────

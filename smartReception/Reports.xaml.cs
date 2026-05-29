@@ -26,5 +26,15 @@ namespace smartReception
         {
             this.InitializeComponent();
         }
+
+        private void SystemsLogsbtn_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SystemLogs));
+        }
+
+        private void reportsBacktbtn_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(entry));
+        }
     }
 }

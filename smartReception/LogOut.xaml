@@ -99,7 +99,8 @@
                             Foreground="#1F2937" 
                             FontSize="14"
                             FontWeight="SemiBold"
-                            CornerRadius="6">
+                            CornerRadius="6"
+                            x:Name="cancelbtn" Click="cancelbtn_Click">
                         <Button.Resources>
                             <ResourceDictionary>
                                 <StaticResource x:Key="ButtonBackgroundPointerOver" ResourceKey="SystemControlPageBackgroundAltHighBrush"/>

@@ -97,7 +97,8 @@
                     HorizontalAlignment="Center"
                     Margin="10" Width="140"
                                 Background="LimeGreen"
-                                CornerRadius="5"/>
+                                CornerRadius="5"
+                                x:Name="ReceptionistLogin" Click="ReceptionistLogin_Click"/>
 
                         <TextBlock Text="ue"
                        x:Name="comment"

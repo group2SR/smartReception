@@ -338,7 +338,7 @@
             </Grid>
 
             <!-- Bottom Save Button -->
-            <StackPanel HorizontalAlignment="Center">
+            <StackPanel HorizontalAlignment="Center" Spacing="10">
 
                 <Button Content="Save Settings"
                         Width="220"
@@ -346,6 +346,12 @@
                         Background="#2563EB"
                         Foreground="White"
                         FontWeight="SemiBold"/>
+                <Button Content="logout" HorizontalAlignment="Center"
+                        Background="PaleVioletRed"
+                        Foreground="White"
+                        x:Name="logoutbtn" Click="logoutbtn_Click"/>
+                <AppBarButton Icon="Back" Label="back" HorizontalAlignment="Left" Background="#2563EB" Foreground="White" CornerRadius="10"
+                              x:Name="settingsbackbtn" Click="settingsbackbtn_Click"/>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

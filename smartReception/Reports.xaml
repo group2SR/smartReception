@@ -278,14 +278,24 @@
                                 Spacing="10">
 
                         <Button Content="Export PDF"
-                                Background="#16A34A"
+                                Background="DarkGreen"
                                 Foreground="White"
                                 Padding="20,10"/>
 
                         <Button Content="Export Excel"
-                                Background="#15803D"
+                                Background="DarkGreen"
                                 Foreground="White"
                                 Padding="20,10"/>
+                        <Button Content="viewSystem"
+                                Background="DarkGreen"
+                                Foreground="White"
+                                Padding="20,10"
+                                x:Name="SystemsLogsbtn" Click="SystemsLogsbtn_Click"/>
+                        <AppBarButton Icon="Back"
+                                  Label="Back"
+                                  Background="#2563EB"
+                                  Foreground="White"
+                                  x:Name="reportsBacktbtn" Click="reportsBacktbtn_Click"/>
                     </StackPanel>
                 </StackPanel>
             </Border>

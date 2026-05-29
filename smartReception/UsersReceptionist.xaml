@@ -189,10 +189,28 @@
                                 <FontIcon Glyph="&#xE76C;" FontSize="10"/>
                             </Button>
                         </StackPanel>
+
                     </Grid>
+                   
 
                 </StackPanel>
             </Border>
+            <Button Content="Settings" 
+                    Background="#0066E2"
+                    Foreground="White"
+                    Width="100"
+                    Height="50"
+                    x:Name="Settingspagbtn" Click="Settingspagbtn_Click"/>
+            <AppBarButton
+                      Icon="Back"
+                      Background="#0066E2" 
+                      Foreground="White" 
+                      HorizontalAlignment="Left" 
+                      Margin="0,8,0,0"
+                CornerRadius="10"
+                x:Name="userreceptionsbackbtn" Click="userreceptionsbackbtn_Click"/>
+
         </StackPanel>
+      
     </ScrollViewer>
 </Page>

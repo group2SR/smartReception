@@ -81,7 +81,8 @@
                                 HorizontalAlignment="Stretch"
                                 Height="45"
                                 Background="LimeGreen" Foreground="White"
-                                CornerRadius="6"/>
+                                CornerRadius="6"
+                                x:Name="adminloginbtn" Click="adminloginbtn_Click"/>
 
                         <TextBlock x:Name="comment" Text="" TextAlignment="Center" Margin="0,15,0,0"/>
                     </StackPanel>

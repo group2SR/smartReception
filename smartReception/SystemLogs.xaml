@@ -228,6 +228,24 @@
                     </Grid>
                 </StackPanel>
             </Border>
+            <Button Content="Create Receptionist"
+                    Background="#2563EB"
+                    Foreground="White"
+                    Padding="20,10"
+                    HorizontalAlignment="Left"
+                    CornerRadius="10"
+                    x:Name="createreceptionistbtn" Click="createreceptionistbtn_Click"/>
+            <AppBarButton
+                       Icon="Back"
+                      
+                       Padding="20,10"
+                       HorizontalAlignment="Left"
+                       CornerRadius="10"
+                        Background="#2563EB"
+                         Foreground="White"
+                       x:Name="systemlogs" Click="systemlogs_Click"/>
         </StackPanel>
+
     </ScrollViewer>
+   
 </Page>
