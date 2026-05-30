@@ -1,0 +1,335 @@
+﻿<Page
+    x:Class="smartReception.MasterDashboard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:smartReception"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="#F1F8E9">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- HEADER -->
+        <Grid Grid.Row="0" Background="#1B5E20" Padding="20,14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="🏢" FontSize="18" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBlock Text="CEMENTERS PLAZA — CENTRAL ADMINISTRATION MASTER"
+                           Foreground="White" FontSize="15" FontWeight="SemiBold"
+                           VerticalAlignment="Center" CharacterSpacing="20"/>
+            </StackPanel>
+            <Border Grid.Column="1" Background="#2E7D32" BorderBrush="#388E3C"
+                    BorderThickness="1" CornerRadius="6" Padding="10,4">
+                <TextBlock Text="● LIVE" Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+            </Border>
+        </Grid>
+
+        <!-- STAT CARDS -->
+        <Grid Grid.Row="1" Background="#F9FBF7" Padding="16,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="White" BorderBrush="#C5E1A5"
+                    BorderThickness="1" CornerRadius="8" Padding="14,10" Margin="0,0,8,0">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Border Background="#E8F5E9" CornerRadius="6" Width="34" Height="34">
+                        <TextBlock Text="👥" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Currently inside" FontSize="11" Foreground="#333333"/>
+                        <TextBlock x:Name="TxtStatActive" Text="0" FontSize="20"
+                                   FontWeight="SemiBold" Foreground="#111111"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Background="White" BorderBrush="#C5E1A5"
+                    BorderThickness="1" CornerRadius="8" Padding="14,10" Margin="0,0,8,0">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Border Background="#E8F5E9" CornerRadius="6" Width="34" Height="34">
+                        <TextBlock Text="📋" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Total logs today" FontSize="11" Foreground="#333333"/>
+                        <TextBlock x:Name="TxtStatLogs" Text="0" FontSize="20"
+                                   FontWeight="SemiBold" Foreground="#111111"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2" Background="White" BorderBrush="#C5E1A5"
+                    BorderThickness="1" CornerRadius="8" Padding="14,10">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Border Background="#E8F5E9" CornerRadius="6" Width="34" Height="34">
+                        <TextBlock Text="🗑️" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Deleted records" FontSize="11" Foreground="#333333"/>
+                        <TextBlock x:Name="TxtStatDeleted" Text="0" FontSize="20"
+                                   FontWeight="SemiBold" Foreground="#111111"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- TOOLBAR -->
+        <Grid Grid.Row="2" Background="#F1F8E9" Padding="16,8" BorderBrush="#C5E1A5" BorderThickness="0,0,0,1" ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="120"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- FIX: TextChanged now points to TxtSearch_TextChanged -->
+            <Border Grid.Column="0" Background="White" BorderBrush="#AED581"
+                    BorderThickness="1" CornerRadius="6" Margin="0,0,10,0">
+                <TextBox x:Name="TxtSearchName"
+                         PlaceholderText="🔍  Search by name or NIN..."
+                         Background="Transparent" BorderThickness="0"
+                         Padding="10,7" FontSize="13" Foreground="#111111"
+                         TextChanged="TxtSearch_TextChanged"/>
+            </Border>
+
+            <!-- FIX: SelectionChanged now points to CboFloor_SelectionChanged -->
+            <Border Grid.Column="1" Background="White" BorderBrush="#AED581"
+                    BorderThickness="1" CornerRadius="6" Margin="0,0,10,0">
+                <ComboBox x:Name="CboFilterFloor"
+                          SelectedIndex="0"
+                          HorizontalAlignment="Stretch"
+                          Background="Transparent" BorderThickness="0"
+                          Padding="8,5" FontSize="13" Foreground="#111111"
+                          SelectionChanged="CboFloor_SelectionChanged">
+                    <ComboBoxItem Content="All Floors" Tag="All"/>
+                    <ComboBoxItem Content="1st Floor"  Tag="1"/>
+                    <ComboBoxItem Content="2nd Floor"  Tag="2"/>
+                </ComboBox>
+            </Border>
+
+            <Button x:Name="BtnRefresh"
+                    Grid.Column="2"
+                    Content="↻  Refresh Logs"
+                    Background="#2E7D32"
+                    Foreground="White"
+                    FontSize="13" FontWeight="SemiBold"
+                    Padding="16,8"
+                    BorderThickness="0"
+                    Click="BtnRefresh_Click">
+                <Button.Resources>
+                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#388E3C"/>
+                    <SolidColorBrush x:Key="ButtonBackgroundPressed"     Color="#1B5E20"/>
+                </Button.Resources>
+            </Button>
+
+            <Button Grid.Column="3"
+                    Content="Enter Client"
+                    Background="Green"
+                    Foreground="White"
+                    x:Name="enterclientsbtn" Click="enterclientsbtn_Click"/>
+
+            <AppBarButton
+                Grid.Column="4"
+                Icon="Back"
+                Background="DarkGreen"
+                Foreground="White"
+                Label="back"
+                CornerRadius="10"
+                x:Name="backbtnMD" Click="backbtnMD_Click"/>
+        </Grid>
+
+        <!-- PIVOT TABS -->
+        <Pivot Grid.Row="3" Margin="0" Padding="0" Background="White">
+
+            <Pivot.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" FontSize="13" Foreground="#111111" Padding="4,0"/>
+                </DataTemplate>
+            </Pivot.HeaderTemplate>
+
+            <!-- TAB 1 — Active Inside -->
+            <PivotItem Header="Active Inside">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Background="#F9FBF7"
+                          BorderBrush="#C5E1A5" BorderThickness="0,0,0,1" Padding="16,9">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1.5*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="FULL NAME"    FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="0" CharacterSpacing="30"/>
+                        <TextBlock Text="NIN"          FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="1" CharacterSpacing="30"/>
+                        <TextBlock Text="FLOOR"        FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="2" CharacterSpacing="30"/>
+                        <TextBlock Text="TIME IN"      FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="3" CharacterSpacing="30"/>
+                        <TextBlock Text="PHONE NUMBER" FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="4" CharacterSpacing="30"/>
+                    </Grid>
+
+                    <ListView x:Name="ActiveClientsListView" Grid.Row="1"
+                              SelectionMode="None" Background="White">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="BorderBrush" Value="#F1F8E9"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="16,11" Background="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="1.5*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1.5*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding FullName}"    FontWeight="SemiBold" FontSize="13" Grid.Column="0" Foreground="#111111"/>
+                                    <TextBlock Text="{Binding NIN}"         FontSize="13" Grid.Column="1" Foreground="#222222"/>
+                                    <TextBlock Text="{Binding FloorName}"   FontSize="13" Grid.Column="2" Foreground="#222222"/>
+                                    <TextBlock Text="{Binding TimeIn}"      FontSize="13" Grid.Column="3" Foreground="#222222"/>
+                                    <TextBlock Text="{Binding PhoneNumber}" FontSize="13" Grid.Column="4" Foreground="#222222"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </PivotItem>
+
+            <!-- TAB 2 — General Visitor History -->
+            <PivotItem Header="General Visitor History">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Background="#F9FBF7"
+                          BorderBrush="#C5E1A5" BorderThickness="0,0,0,1" Padding="16,9">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="FULL NAME"    FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="0" CharacterSpacing="30"/>
+                        <TextBlock Text="NIN"          FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="1" CharacterSpacing="30"/>
+                        <TextBlock Text="FLOOR TARGET" FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="2" CharacterSpacing="30"/>
+                        <TextBlock Text="ACCESS DATE"  FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="3" CharacterSpacing="30"/>
+                        <TextBlock Text="TIME FRAME"   FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="4" CharacterSpacing="30"/>
+                        <TextBlock Text="STATUS"       FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="5" CharacterSpacing="30"/>
+                    </Grid>
+
+                    <ListView x:Name="AllLogsListView" Grid.Row="1"
+                              SelectionMode="None" Background="White">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="BorderBrush" Value="#F1F8E9"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="16,11">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="1.5*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1.5*"/>
+                                        <ColumnDefinition Width="1.5*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding FullName}"      FontWeight="SemiBold" FontSize="13" Grid.Column="0" Foreground="#111111"/>
+                                    <TextBlock Text="{Binding NIN}"           FontSize="13" Grid.Column="1" Foreground="#222222"/>
+                                    <TextBlock Text="{Binding FloorName}"     FontSize="13" Grid.Column="2" Foreground="#222222"/>
+                                    <TextBlock Text="{Binding AccessDate}"    FontSize="13" Grid.Column="3" Foreground="#222222"/>
+                                    <TextBlock Text="{Binding TimeInSummary}" FontSize="13" Grid.Column="4" Foreground="#222222"/>
+                                    <TextBlock Text="{Binding Status}"        FontSize="12" FontWeight="SemiBold" Grid.Column="5"
+                                               Foreground="{Binding StatusColor}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </PivotItem>
+
+            <!-- TAB 3 — Deleted Records Archive -->
+            <PivotItem Header="Deleted Records Archive">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Background="#F9FBF7"
+                          BorderBrush="#C5E1A5" BorderThickness="0,0,0,1" Padding="16,9">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="2.5*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="FULL NAME"          FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="0" CharacterSpacing="30"/>
+                        <TextBlock Text="FLOOR"              FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="1" CharacterSpacing="30"/>
+                        <TextBlock Text="DATE REMOVED"       FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="2" CharacterSpacing="30"/>
+                        <TextBlock Text="REASON FOR REMOVAL" FontSize="11" FontWeight="SemiBold" Foreground="#1B5E20" Grid.Column="3" CharacterSpacing="30"/>
+                    </Grid>
+
+                    <ListView x:Name="DeletedClientsListView" Grid.Row="1"
+                              SelectionMode="None" Background="White">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="BorderBrush" Value="#F1F8E9"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="16,11">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1.5*"/>
+                                        <ColumnDefinition Width="2.5*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding FullName}"             FontWeight="SemiBold" FontSize="13" Grid.Column="0" Foreground="#111111"/>
+                                    <TextBlock Text="{Binding FloorName}"            FontSize="13" Grid.Column="1" Foreground="#222222"/>
+                                    <TextBlock Text="{Binding DeletedDateFormatted}" FontSize="13" Grid.Column="2" Foreground="#222222"/>
+                                    <TextBlock Text="{Binding Reason}"               FontSize="13" FontStyle="Italic" Grid.Column="3" Foreground="#444444"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </PivotItem>
+
+        </Pivot>
+
+    </Grid>
+</Page>
