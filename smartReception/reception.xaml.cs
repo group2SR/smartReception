@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -45,7 +45,7 @@ namespace smartReception
 
         private void ReceptionistLogin_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(dashboard));
+            Frame.Navigate(typeof(MasterDashboard));
         }
     }
 }

@@ -6,353 +6,274 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-
-        <StackPanel Padding="20"
-                    Spacing="20">
-
-            <!-- Page Title -->
-            <TextBlock Text="Settings"
-                       FontSize="34"
-                       FontWeight="Bold"
-                       Foreground="#1F2937"/>
-
-            <!-- Top Grid -->
-            <Grid ColumnSpacing="12"
-                  RowSpacing="12">
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <!-- Administrator Account -->
-                <Border Grid.Row="0"
-                        Grid.Column="0"
-                        Background="White"
-                        CornerRadius="10"
-                        Padding="18"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
-
-                    <StackPanel Spacing="12">
-
-                        <TextBlock Text="Administrator Account"
-                                   FontSize="18"
-                                   FontWeight="SemiBold"/>
-
-                        <!-- Full Name -->
-                        <StackPanel Spacing="5">
-
-                            <TextBlock Text="Full Name"
-                                       FontSize="13"/>
-
-                            <TextBox Text="Administrator"
-                                     Height="38"/>
-                        </StackPanel>
-
-                        <!-- Username -->
-                        <StackPanel Spacing="5">
-
-                            <TextBlock Text="Username"
-                                       FontSize="13"/>
-
-                            <TextBox Text="admin"
-                                     Height="38"/>
-                        </StackPanel>
-
-                        <!-- Email -->
-                        <StackPanel Spacing="5">
-
-                            <TextBlock Text="Email"
-                                       FontSize="13"/>
-
-                            <TextBox Text="admin@building.com"
-                                     Height="38"/>
-                        </StackPanel>
-
-                        <!-- Button -->
-                        <Button Content="Save Changes"
-                                Height="40"
-                                Background="#2563EB"
-                                Foreground="White"
-                                FontWeight="SemiBold"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Change Password -->
-                <Border Grid.Row="0"
-                        Grid.Column="1"
-                        Background="White"
-                        CornerRadius="10"
-                        Padding="18"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
-
-                    <StackPanel Spacing="12">
-
-                        <TextBlock Text="Change Password"
-                                   FontSize="18"
-                                   FontWeight="SemiBold"/>
-
-                        <!-- Current Password -->
-                        <StackPanel Spacing="5">
-
-                            <TextBlock Text="Current Password"
-                                       FontSize="13"/>
-
-                            <PasswordBox Height="38"
-                                         Password="12345678"/>
-                        </StackPanel>
-
-                        <!-- New Password -->
-                        <StackPanel Spacing="5">
-
-                            <TextBlock Text="New Password"
-                                       FontSize="13"/>
-
-                            <PasswordBox Height="38"
-                                         Password="12345678"/>
-                        </StackPanel>
-
-                        <!-- Confirm Password -->
-                        <StackPanel Spacing="5">
-
-                            <TextBlock Text="Confirm Password"
-                                       FontSize="13"/>
-
-                            <PasswordBox Height="38"
-                                         Password="12345678"/>
-                        </StackPanel>
-
-                        <!-- Button -->
-                        <Button Content="Update Password"
-                                Height="40"
-                                Background="#2563EB"
-                                Foreground="White"
-                                FontWeight="SemiBold"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Security Settings -->
-                <Border Grid.Row="0"
-                        Grid.Column="2"
-                        Background="White"
-                        CornerRadius="10"
-                        Padding="18"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
-
-                    <StackPanel Spacing="12">
-
-                        <TextBlock Text="Security Settings"
-                                   FontSize="18"
-                                   FontWeight="SemiBold"/>
-
-                        <CheckBox Content="Require Strong Passwords"
-                                  IsChecked="True"/>
-
-                        <CheckBox Content="Allow Receptionist Password Reset"
-                                  IsChecked="True"/>
-
-                        <CheckBox Content="Enable Login Audit Trail"
-                                  IsChecked="True"/>
-
-                        <CheckBox Content="Auto Logout After Inactivity"/>
-
-                        <!-- Timeout -->
-                        <StackPanel Spacing="5">
-
-                            <TextBlock Text="Inactivity Timeout (minutes)"
-                                       FontSize="13"/>
-
-                            <ComboBox Height="38"
-                                      SelectedIndex="0">
-
-                                <ComboBoxItem Content="30"/>
-                                <ComboBoxItem Content="60"/>
-                                <ComboBoxItem Content="90"/>
-                                <ComboBoxItem Content="120"/>
-
-                            </ComboBox>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
-
-                <!-- Database Settings -->
-                <Border Grid.Row="1"
-                        Grid.Column="0"
-                        Background="White"
-                        CornerRadius="10"
-                        Padding="18"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
-
-                    <StackPanel Spacing="12">
-
-                        <TextBlock Text="Database Settings"
-                                   FontSize="18"
-                                   FontWeight="SemiBold"/>
-
-                        <!-- Server Name -->
-                        <StackPanel Spacing="5">
-
-                            <TextBlock Text="Server Name"
-                                       FontSize="13"/>
-
-                            <TextBox Text="DESKTOP-SERVER"
-                                     Height="38"/>
-                        </StackPanel>
-
-                        <!-- Database Name -->
-                        <StackPanel Spacing="5">
-
-                            <TextBlock Text="Database Name"
-                                       FontSize="13"/>
-
-                            <TextBox Text="BuildingAccessDB"
-                                     Height="38"/>
-                        </StackPanel>
-
-                        <!-- Button -->
-                        <Button Content="Test Connection"
-                                Height="38"
-                                Background="#2563EB"
-                                Foreground="White"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Backup & Restore -->
-                <Border Grid.Row="1"
-                        Grid.Column="1"
-                        Background="White"
-                        CornerRadius="10"
-                        Padding="18"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
-
-                    <StackPanel Spacing="15">
-
-                        <TextBlock Text="Backup &amp; Restore"
-                                   FontSize="18"
-                                   FontWeight="SemiBold"/>
-
-                        <TextBlock Text="Backup your database regularly to prevent data loss."
-                                   TextWrapping="Wrap"
-                                   Foreground="#6B7280"/>
-
-                        <!-- Backup Button -->
-                        <Button Content="Backup Database"
-                                Height="40"
-                                Background="#16A34A"
-                                Foreground="White"
-                                FontWeight="SemiBold"/>
-
-                        <!-- Restore Button -->
-                        <Button Content="Restore Database"
-                                Height="40"
-                                Background="#2563EB"
-                                Foreground="White"
-                                FontWeight="SemiBold"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- System Information -->
-                <Border Grid.Row="1"
-                        Grid.Column="2"
-                        Background="White"
-                        CornerRadius="10"
-                        Padding="18"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
-
-                    <StackPanel Spacing="12">
-
-                        <TextBlock Text="System Information"
-                                   FontSize="18"
-                                   FontWeight="SemiBold"/>
-
-                        <Grid RowSpacing="10">
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock Text="System Name:"
-                                       Foreground="#6B7280"/>
-
-                            <TextBlock Grid.Column="1"
-                                       Margin="10,0,0,0"
-                                       Text="Smart Reception System"/>
-
-                            <TextBlock Grid.Row="1"
-                                       Text="Version:"
-                                       Foreground="#6B7280"/>
-
-                            <TextBlock Grid.Row="1"
-                                       Grid.Column="1"
-                                       Margin="10,0,0,0"
-                                       Text="1.0.0"/>
-
-                            <TextBlock Grid.Row="2"
-                                       Text="Database:"
-                                       Foreground="#6B7280"/>
-
-                            <TextBlock Grid.Row="2"
-                                       Grid.Column="1"
-                                       Margin="10,0,0,0"
-                                       Text="SQL Server"/>
-
-                            <TextBlock Grid.Row="3"
-                                       Text="Developer:"
-                                       Foreground="#6B7280"/>
-
-                            <TextBlock Grid.Row="3"
-                                       Grid.Column="1"
-                                       Margin="10,0,0,0"
-                                       Text="Administrator"/>
-                        </Grid>
-
-                        <TextBlock Text="© 2025 All Rights Reserved"
-                                   Margin="0,10,0,0"
-                                   Foreground="#6B7280"/>
-                    </StackPanel>
-                </Border>
+    Background="#F1F5F9">
+
+    <Page.Resources>
+        <ThemeShadow x:Name="SharedShadow" />
+        
+        <!-- Sidebar Button Style -->
+        <Style TargetType="Button" x:Key="SidebarButtonStyle">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="24,0,0,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="8"/>
+        </Style>
+
+        <Style TargetType="Button" x:Key="ActiveSidebarButtonStyle" BasedOn="{StaticResource SidebarButtonStyle}">
+            <Setter Property="Background" Value="#1E293B"/>
+            <Setter Property="Foreground" Value="#10B981"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- SIDEBAR NAVIGATION -->
+        <Grid Grid.Column="0" Background="#0F172A" Padding="0,24,0,24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Sidebar Header -->
+            <StackPanel Grid.Row="0" Padding="24,0,24,32" Spacing="8">
+                <Image Source="/Assets/cemlogo_transparent.png" Height="45" HorizontalAlignment="Left"/>
+                <TextBlock Text="CEMENTERS PLAZA" Foreground="#10B981" FontSize="11" FontWeight="Bold" CharacterSpacing="100"/>
+                <TextBlock Text="Central Administration" Foreground="#64748B" FontSize="12"/>
+            </StackPanel>
+
+            <!-- Navigation Links -->
+            <StackPanel Grid.Row="1" Spacing="4" Padding="12,0">
+                <StackPanel.Resources>
+                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#1E293B"/>
+                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="#10B981"/>
+                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#0F172A"/>
+                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="#10B981"/>
+                </StackPanel.Resources>
+                <Button Content="📊  Dashboard" Click="NavDashboard_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="📜  Access Logs" Click="NavAccessControl_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="📈  General Reports" Click="NavReports_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="📜  System Logs" Click="NavLogs_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="👥  Receptionists" Click="NavReceptionists_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="⚙️  Settings" Click="NavSettings_Click" Style="{StaticResource ActiveSidebarButtonStyle}"/>
+            </StackPanel>
+
+            <!-- Footer / Log Out -->
+            <StackPanel Grid.Row="2" Padding="12,0" Spacing="8">
+                <Rectangle Height="1" Fill="#1E293B" Margin="0,0,0,12"/>
+                <Button Content="🚪  Sign Out" Click="NavLogout_Click" Style="{StaticResource SidebarButtonStyle}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- MAIN CONTENT -->
+        <Grid Grid.Column="1">
+            <Grid.Resources>
+                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#059669"/>
+                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
+                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#047857"/>
+                <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Grid Grid.Row="0" Background="White" Padding="32,20" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="System Settings" FontSize="26" FontWeight="Bold" Foreground="#0F172A"/>
+                    <TextBlock Text="Manage administrator accounts, configure database integration and audit policies" Foreground="#64748B" FontSize="13"/>
+                </StackPanel>
             </Grid>
 
-            <!-- Bottom Save Button -->
-            <StackPanel HorizontalAlignment="Center" Spacing="10">
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Padding="32" Spacing="24">
+                    <!-- Row 1: Admin and Password Settings -->
+                    <Grid ColumnSpacing="20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                <Button Content="Save Settings"
-                        Width="220"
-                        Height="45"
-                        Background="#2563EB"
-                        Foreground="White"
-                        FontWeight="SemiBold"/>
-                <Button Content="logout" HorizontalAlignment="Center"
-                        Background="PaleVioletRed"
-                        Foreground="White"
-                        x:Name="logoutbtn" Click="logoutbtn_Click"/>
-                <AppBarButton Icon="Back" Label="back" HorizontalAlignment="Left" Background="#2563EB" Foreground="White" CornerRadius="10"
-                              x:Name="settingsbackbtn" Click="settingsbackbtn_Click"/>
-            </StackPanel>
-        </StackPanel>
-    </ScrollViewer>
+                        <!-- Admin Details Card -->
+                        <Border Grid.Column="0" Background="White" CornerRadius="12" Padding="24" BorderBrush="#E2E8F0" BorderThickness="1">
+                            <Border.Shadow>
+                                <ThemeShadow />
+                            </Border.Shadow>
+                            <StackPanel Spacing="16">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Administrator Account" FontSize="16" FontWeight="Bold" Foreground="#0F172A"/>
+                                    <TextBlock Text="Update your profile name and login username" FontSize="12" Foreground="#64748B" TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <Rectangle Height="1" Fill="#E2E8F0"/>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="Full Name" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <TextBox x:Name="TxtAdminFullName" PlaceholderText="Loading..." Height="40" CornerRadius="8" BorderBrush="#CBD5E1" Foreground="Black"/>
+                                </StackPanel>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="Username" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <TextBox x:Name="TxtAdminUsername" PlaceholderText="Loading..." Height="40" CornerRadius="8" BorderBrush="#CBD5E1" Foreground="Black"/>
+                                </StackPanel>
+                                <Button Content="Save Profile" HorizontalAlignment="Stretch" Height="40" Background="#059669" Foreground="White" FontWeight="Bold" CornerRadius="8" Click="BtnSaveAccount_Click"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Change Password Card -->
+                        <Border Grid.Column="1" Background="White" CornerRadius="12" Padding="24" BorderBrush="#E2E8F0" BorderThickness="1">
+                            <Border.Shadow>
+                                <ThemeShadow />
+                            </Border.Shadow>
+                            <StackPanel Spacing="16">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Change Password" FontSize="16" FontWeight="Bold" Foreground="#0F172A"/>
+                                    <TextBlock Text="Update your login password regularly to maintain security" FontSize="12" Foreground="#64748B" TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <Rectangle Height="1" Fill="#E2E8F0"/>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="Current Password" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <PasswordBox x:Name="PwdCurrent" PlaceholderText="••••••••" Height="40" CornerRadius="8" BorderBrush="#CBD5E1" Foreground="Black"/>
+                                </StackPanel>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="New Password" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <PasswordBox x:Name="PwdNew" PlaceholderText="••••••••" Height="40" CornerRadius="8" BorderBrush="#CBD5E1" Foreground="Black"/>
+                                </StackPanel>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="Confirm New Password" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <PasswordBox x:Name="PwdConfirm" PlaceholderText="••••••••" Height="40" CornerRadius="8" BorderBrush="#CBD5E1" Foreground="Black"/>
+                                </StackPanel>
+                                <Button Content="Update Password" HorizontalAlignment="Stretch" Height="40" Background="#059669" Foreground="White" FontWeight="Bold" CornerRadius="8" Click="BtnUpdatePassword_Click"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Security Policy Card -->
+                        <Border Grid.Column="2" Background="White" CornerRadius="12" Padding="24" BorderBrush="#E2E8F0" BorderThickness="1">
+                            <Border.Shadow>
+                                <ThemeShadow />
+                            </Border.Shadow>
+                            <StackPanel Spacing="16">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Security Configuration" FontSize="16" FontWeight="Bold" Foreground="#0F172A"/>
+                                    <TextBlock Text="Define building login audit trail policies and parameters" FontSize="12" Foreground="#64748B" TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <Rectangle Height="1" Fill="#E2E8F0"/>
+                                <CheckBox Content="Enforce Strong Passwords" IsChecked="True" FontSize="13" Foreground="#334155"/>
+                                <CheckBox Content="Allow Front Reset Actions" IsChecked="True" FontSize="13" Foreground="#334155"/>
+                                <CheckBox Content="Track Realtime Audit Trail" IsChecked="True" FontSize="13" Foreground="#334155"/>
+                                <CheckBox Content="Session Inactivity Timeout" FontSize="13" Foreground="#334155"/>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="Inactivity Limit" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <ComboBox Height="40" HorizontalAlignment="Stretch" SelectedIndex="0" CornerRadius="8" BorderBrush="#CBD5E1" Foreground="Black">
+                                        <ComboBoxItem Content="30 minutes" Foreground="Black"/>
+                                        <ComboBoxItem Content="60 minutes" Foreground="Black"/>
+                                        <ComboBoxItem Content="90 minutes" Foreground="Black"/>
+                                    </ComboBox>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Row 2: Database and System Info -->
+                    <Grid ColumnSpacing="20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Supabase Database Card -->
+                        <Border Grid.Column="0" Background="White" CornerRadius="12" Padding="24" BorderBrush="#E2E8F0" BorderThickness="1">
+                            <Border.Shadow>
+                                <ThemeShadow />
+                            </Border.Shadow>
+                            <StackPanel Spacing="16">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Supabase Integration" FontSize="16" FontWeight="Bold" Foreground="#0F172A"/>
+                                    <TextBlock Text="Active secure connection info to database servers" FontSize="12" Foreground="#64748B"/>
+                                </StackPanel>
+                                <Rectangle Height="1" Fill="#E2E8F0"/>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="API Endpoint" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <TextBox Text="Supabase Cloud Gateway" IsReadOnly="True" Height="40" CornerRadius="8" BorderBrush="#E2E8F0" Foreground="#64748B"/>
+                                </StackPanel>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="Database Namespace" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <TextBox Text="SmartReceptionDB" IsReadOnly="True" Height="40" CornerRadius="8" BorderBrush="#E2E8F0" Foreground="#64748B"/>
+                                </StackPanel>
+                                <Button Content="Test API Sync Link" HorizontalAlignment="Stretch" Height="40" Background="#1E293B" Foreground="White" FontWeight="Bold" CornerRadius="8"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Database Backup Card -->
+                        <Border Grid.Column="1" Background="White" CornerRadius="12" Padding="24" BorderBrush="#E2E8F0" BorderThickness="1">
+                            <Border.Shadow>
+                                <ThemeShadow />
+                            </Border.Shadow>
+                            <StackPanel Spacing="16">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Backup &amp; Restore" FontSize="16" FontWeight="Bold" Foreground="#0F172A"/>
+                                    <TextBlock Text="Safeguard against database logs loss" FontSize="12" Foreground="#64748B"/>
+                                </StackPanel>
+                                <Rectangle Height="1" Fill="#E2E8F0"/>
+                                <Border Background="#ECFDF5" BorderBrush="#A7F3D0" BorderThickness="1" CornerRadius="8" Padding="12">
+                                    <TextBlock Text="Status: All logs synchronized to live cloud servers." FontSize="12" Foreground="#047857" TextWrapping="Wrap"/>
+                                </Border>
+                                <Button Content="Export Cloud Backup" HorizontalAlignment="Stretch" Height="40" Background="#059669" Foreground="White" FontWeight="Bold" CornerRadius="8"/>
+                                <Button Content="Import Database" HorizontalAlignment="Stretch" Height="40" Background="#1E293B" Foreground="White" FontWeight="Bold" CornerRadius="8"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- System Information Card -->
+                        <Border Grid.Column="2" Background="White" CornerRadius="12" Padding="24" BorderBrush="#E2E8F0" BorderThickness="1">
+                            <Border.Shadow>
+                                <ThemeShadow />
+                            </Border.Shadow>
+                            <StackPanel Spacing="16">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="System Information" FontSize="16" FontWeight="Bold" Foreground="#0F172A"/>
+                                    <TextBlock Text="Installed app version and host platform details" FontSize="12" Foreground="#64748B"/>
+                                </StackPanel>
+                                <Rectangle Height="1" Fill="#E2E8F0"/>
+                                <Grid RowSpacing="8">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="App Name" FontSize="12" FontWeight="SemiBold" Foreground="#64748B"/>
+                                    <TextBlock Grid.Column="1" Text="Smart Reception" FontSize="13" Foreground="#0F172A"/>
+                                    
+                                    <TextBlock Grid.Row="1" Text="Version" FontSize="12" FontWeight="SemiBold" Foreground="#64748B"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="1.0.0 (Build 2026)" FontSize="13" Foreground="#0F172A"/>
+                                    
+                                    <TextBlock Grid.Row="2" Text="Framework" FontSize="12" FontWeight="SemiBold" Foreground="#64748B"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="Windows UWP .NET Core" FontSize="13" Foreground="#0F172A"/>
+                                    
+                                    <TextBlock Grid.Row="3" Text="Database" FontSize="12" FontWeight="SemiBold" Foreground="#64748B"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="Supabase C# SDK" FontSize="13" Foreground="#0F172A"/>
+                                </Grid>
+                                <Rectangle Height="1" Fill="#E2E8F0"/>
+                                <TextBlock Text="© 2026 Cementers Plaza. All rights reserved." FontSize="11" Foreground="#94A3B8"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
 </Page>

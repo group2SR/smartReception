@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -32,6 +32,11 @@ namespace smartReception
             if (Frame.CanGoBack) {
                 Frame.GoBack();
             }
+        }
+
+        private void logoutbtn_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(MainPage));
         }
     }
 }

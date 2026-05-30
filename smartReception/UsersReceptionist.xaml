@@ -6,211 +6,264 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="#F8FAFC">
+    Background="#F1F5F9">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-        <StackPanel Padding="24" HorizontalAlignment="Stretch" Spacing="20">
+    <Page.Resources>
+        <ThemeShadow x:Name="SharedShadow" />
+        
+        <!-- Sidebar Button Style -->
+        <Style TargetType="Button" x:Key="SidebarButtonStyle">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="24,0,0,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="8"/>
+        </Style>
 
-            <TextBlock Text="Users (Receptionists)" 
-                       FontSize="28" 
-                       FontWeight="Bold" 
-                       Foreground="#0F172A"/>
+        <Style TargetType="Button" x:Key="ActiveSidebarButtonStyle" BasedOn="{StaticResource SidebarButtonStyle}">
+            <Setter Property="Background" Value="#1E293B"/>
+            <Setter Property="Foreground" Value="#10B981"/>
+        </Style>
+    </Page.Resources>
 
-            <Border Background="White" CornerRadius="8" BorderBrush="#E2E8F0" BorderThickness="1" Padding="24">
-                <StackPanel Spacing="16">
-                    <Grid>
-                        <TextBlock Text="Add / Edit Receptionist" FontSize="16" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
-                        <Button HorizontalAlignment="Right" Background="#0066E2" Foreground="White" CornerRadius="6" Padding="16,8">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon Glyph="&#xE710;" FontSize="12" Foreground="White"/>
-                                <TextBlock Text="Add Receptionist" FontSize="13" FontWeight="SemiBold"/>
-                            </StackPanel>
-                        </Button>
-                    </Grid>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="12"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="12"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="12"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="12"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+        <!-- SIDEBAR NAVIGATION -->
+        <Grid Grid.Column="0" Background="#0F172A" Padding="0,24,0,24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-                        <StackPanel Grid.Column="0" Spacing="6">
-                            <TextBlock Text="First Name" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
-                            <TextBox PlaceholderText="Enter first name" Height="38" CornerRadius="6" BorderBrush="#CBD5E1"/>
-                        </StackPanel>
+            <!-- Sidebar Header -->
+            <StackPanel Grid.Row="0" Padding="24,0,24,32" Spacing="8">
+                <Image Source="/Assets/cemlogo_transparent.png" Height="45" HorizontalAlignment="Left"/>
+                <TextBlock Text="CEMENTERS PLAZA" Foreground="#10B981" FontSize="11" FontWeight="Bold" CharacterSpacing="100"/>
+                <TextBlock Text="Central Administration" Foreground="#64748B" FontSize="12"/>
+            </StackPanel>
 
-                        <StackPanel Grid.Column="2" Spacing="6">
-                            <TextBlock Text="Last Name" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
-                            <TextBox PlaceholderText="Enter last name" Height="38" CornerRadius="6" BorderBrush="#CBD5E1"/>
-                        </StackPanel>
+            <!-- Navigation Links -->
+            <StackPanel Grid.Row="1" Spacing="4" Padding="12,0">
+                <StackPanel.Resources>
+                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#1E293B"/>
+                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="#10B981"/>
+                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#0F172A"/>
+                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="#10B981"/>
+                </StackPanel.Resources>
+                <Button Content="📊  Dashboard" Click="NavDashboard_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="📜  Access Logs" Click="NavAccessControl_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="📈  General Reports" Click="NavReports_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="📜  System Logs" Click="NavLogs_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="👥  Receptionists" Click="NavReceptionists_Click" Style="{StaticResource ActiveSidebarButtonStyle}"/>
+                <Button Content="⚙️  Settings" Click="NavSettings_Click" Style="{StaticResource SidebarButtonStyle}"/>
+            </StackPanel>
 
-                        <StackPanel Grid.Column="4" Spacing="6">
-                            <TextBlock Text="Username" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
-                            <TextBox PlaceholderText="Enter username" Height="38" CornerRadius="6" BorderBrush="#CBD5E1"/>
-                        </StackPanel>
+            <!-- Footer / Log Out -->
+            <StackPanel Grid.Row="2" Padding="12,0" Spacing="8">
+                <Rectangle Height="1" Fill="#1E293B" Margin="0,0,0,12"/>
+                <Button Content="🚪  Sign Out" Click="NavLogout_Click" Style="{StaticResource SidebarButtonStyle}"/>
+            </StackPanel>
+        </Grid>
 
-                        <StackPanel Grid.Column="6" Spacing="6">
-                            <TextBlock Text="Password" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
-                            <PasswordBox PlaceholderText="Enter password" Height="38" CornerRadius="6" BorderBrush="#CBD5E1" PasswordChar="●"/>
-                        </StackPanel>
+        <!-- MAIN CONTENT -->
+        <Grid Grid.Column="1">
+            <Grid.Resources>
+                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#059669"/>
+                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
+                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#047857"/>
+                <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                        <StackPanel Grid.Column="8" Spacing="6">
-                            <TextBlock Text="Status" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
-                            <ComboBox PlaceholderText="Active" HorizontalAlignment="Stretch" Height="38" CornerRadius="6" BorderBrush="#CBD5E1"/>
-                        </StackPanel>
-                    </Grid>
-
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12" Margin="0,4,0,0">
-                        <Button Content="Save" Width="100" Height="36" Background="#0066E2" Foreground="White" FontWeight="SemiBold" CornerRadius="6"/>
-                        <Button Content="Clear" Width="100" Height="36" Background="#D2D6DC" Foreground="#1F2937" FontWeight="SemiBold" CornerRadius="6"/>
-                    </StackPanel>
+            <!-- Header -->
+            <Grid Grid.Row="0" Background="White" Padding="32,20" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Receptionist Accounts" FontSize="26" FontWeight="Bold" Foreground="#0F172A"/>
+                    <TextBlock Text="Manage active front desk receptionist logins, block access, or update profile info" Foreground="#64748B" FontSize="13"/>
                 </StackPanel>
-            </Border>
+            </Grid>
 
-            <Border Background="White" CornerRadius="8" BorderBrush="#E2E8F0" BorderThickness="1" Padding="24">
-                <StackPanel Spacing="16">
-
-                    <StackPanel Spacing="6" MaxWidth="360" HorizontalAlignment="Left">
-                        <TextBlock Text="Search Receptionist" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
-                        <Grid>
-                            <TextBox PlaceholderText="Search by name or username..." Height="38" CornerRadius="6" BorderBrush="#CBD5E1" Padding="10,6,36,6"/>
-                            <FontIcon Glyph="&#xE721;" FontSize="14" Foreground="#64748B" HorizontalAlignment="Right" Margin="0,0,12,0"/>
-                        </Grid>
-                    </StackPanel>
-
-                    <Border BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6">
-                        <StackPanel>
-                            <Grid Background="#F1F5F9" Padding="16,14">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="2*"/>
-                                    <ColumnDefinition Width="2*"/>
-                                    <ColumnDefinition Width="2*"/>
-                                    <ColumnDefinition Width="1.5*"/>
-                                    <ColumnDefinition Width="3*"/>
-                                    <ColumnDefinition Width="3.2*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock Grid.Column="0" Text="User ID" FontSize="12" FontWeight="Bold" Foreground="#334155"/>
-                                <TextBlock Grid.Column="1" Text="Full Name" FontSize="12" FontWeight="Bold" Foreground="#334155"/>
-                                <TextBlock Grid.Column="2" Text="Username" FontSize="12" FontWeight="Bold" Foreground="#334155"/>
-                                <TextBlock Grid.Column="3" Text="Role" FontSize="12" FontWeight="Bold" Foreground="#334155"/>
-                                <TextBlock Grid.Column="4" Text="Status" FontSize="12" FontWeight="Bold" Foreground="#334155"/>
-                                <TextBlock Grid.Column="5" Text="Created Date" FontSize="12" FontWeight="Bold" Foreground="#334155"/>
-                                <TextBlock Grid.Column="6" Text="Actions" FontSize="12" FontWeight="Bold" Foreground="#334155"/>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Padding="32" Spacing="24">
+                    <!-- ADD / EDIT FORM -->
+                    <Border Background="White" CornerRadius="12" Padding="24" BorderBrush="#E2E8F0" BorderThickness="1">
+                        <Border.Shadow>
+                            <ThemeShadow />
+                        </Border.Shadow>
+                        <StackPanel Spacing="20">
+                            <Grid>
+                                <TextBlock x:Name="TxtFormTitle" Text="Add New Receptionist" FontSize="18" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                                <Button HorizontalAlignment="Right" Background="#1E293B" Foreground="White" CornerRadius="8" Padding="16,8" Height="36" Click="BtnClear_Click">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <FontIcon Glyph="&#xE710;" FontSize="12" Foreground="White"/>
+                                        <TextBlock Text="New Account" FontSize="13" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Button>
                             </Grid>
 
-                            <ListView SelectionMode="None" IsItemClickEnabled="False" Padding="0">
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                        <Setter Property="Padding" Value="0"/>
-                                        <Setter Property="MinHeight" Value="52"/>
-                                        <Setter Property="BorderBrush" Value="#E2E8F0"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                    </Style>
-                                </ListView.ItemContainerStyle>
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
 
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Padding="16,10">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="1*"/>
-                                                <ColumnDefinition Width="2*"/>
-                                                <ColumnDefinition Width="2*"/>
-                                                <ColumnDefinition Width="2*"/>
-                                                <ColumnDefinition Width="1.5*"/>
-                                                <ColumnDefinition Width="3*"/>
-                                                <ColumnDefinition Width="3.2*"/>
-                                            </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Spacing="6">
+                                    <TextBlock Text="First Name" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <TextBox x:Name="TxtFirstName" PlaceholderText="Trevor" Height="40" CornerRadius="8" BorderBrush="#CBD5E1" Foreground="Black"/>
+                                </StackPanel>
 
-                                            <TextBlock Grid.Column="0" Text="201" FontSize="13" Foreground="#0F172A" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="1" Text="John Maina" FontSize="13" FontWeight="SemiBold" Foreground="#0F172A" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="2" Text="jmaina" FontSize="13" Foreground="#334155" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="3" Text="Receptionist" FontSize="13" Foreground="#334155" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1" Spacing="6">
+                                    <TextBlock Text="Last Name" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <TextBox x:Name="TxtLastName" PlaceholderText="Mac" Height="40" CornerRadius="8" BorderBrush="#CBD5E1" Foreground="Black"/>
+                                </StackPanel>
 
-                                            <Border Grid.Column="4" Background="#E6F4EA" BorderBrush="#34A853" BorderThickness="0.5" CornerRadius="12" Padding="10,4" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                <TextBlock Text="Active" FontSize="11" FontWeight="SemiBold" Foreground="#137333"/>
-                                            </Border>
+                                <StackPanel Grid.Column="2" Spacing="6">
+                                    <TextBlock Text="Username" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <TextBox x:Name="TxtUsername" PlaceholderText="trevor_desk" Height="40" CornerRadius="8" BorderBrush="#CBD5E1" Foreground="Black"/>
+                                </StackPanel>
 
-                                            <TextBlock Grid.Column="5" Text="10/05/2025 08:30 AM" FontSize="13" Foreground="#334155" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="3" Spacing="6">
+                                    <TextBlock Text="Password" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <PasswordBox x:Name="TxtPassword" PlaceholderText="••••••••" Height="40" CornerRadius="8" BorderBrush="#CBD5E1" PasswordChar="●" Foreground="Black"/>
+                                </StackPanel>
 
-                                            <StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                                <Button Background="#0066E2" Foreground="White" CornerRadius="4" Padding="10,6" Height="30">
-                                                    <StackPanel Orientation="Horizontal" Spacing="4">
-                                                        <FontIcon Glyph="&#xE70F;" FontSize="11" Foreground="White"/>
-                                                        <TextBlock Text="Edit" FontSize="12" FontWeight="SemiBold"/>
-                                                    </StackPanel>
-                                                </Button>
+                                <StackPanel Grid.Column="4" Spacing="6">
+                                    <TextBlock Text="Status" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <ComboBox x:Name="CboStatus" PlaceholderText="Select" HorizontalAlignment="Stretch" Height="40" CornerRadius="8" BorderBrush="#CBD5E1" Foreground="Black">
+                                        <ComboBoxItem Content="Active" Tag="false" Foreground="Black"/>
+                                        <ComboBoxItem Content="Blocked" Tag="true" Foreground="Black"/>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Grid>
 
-                                                <Button Background="#F59E0B" Foreground="White" CornerRadius="4" Padding="10,6" Height="30">
-                                                    <StackPanel Orientation="Horizontal" Spacing="4">
-                                                        <FontIcon Glyph="&#xF140;" FontSize="11" Foreground="White"/>
-                                                        <TextBlock Text="Block" FontSize="12" FontWeight="SemiBold"/>
-                                                    </StackPanel>
-                                                </Button>
-
-                                                <Button Background="#DC2626" Foreground="White" CornerRadius="4" Padding="10,6" Height="30">
-                                                    <StackPanel Orientation="Horizontal" Spacing="4">
-                                                        <FontIcon Glyph="&#xE74D;" FontSize="11" Foreground="White"/>
-                                                        <TextBlock Text="Delete" FontSize="12" FontWeight="SemiBold"/>
-                                                    </StackPanel>
-                                                </Button>
-                                            </StackPanel>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                                <Button Content="Clear" Width="100" Height="40" Background="#F1F5F9" Foreground="#1E293B" FontWeight="Bold" CornerRadius="8" Click="BtnClear_Click"/>
+                                <Button x:Name="BtnSave" Content="Save Account" Width="120" Height="40" Background="#059669" Foreground="White" FontWeight="Bold" CornerRadius="8" Click="BtnSave_Click"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
 
-                    <Grid Margin="0,8,0,0">
-                        <TextBlock Text="Showing 1 to 5 of 0 entries" FontSize="13" Foreground="#475569" VerticalAlignment="Center"/>
+                    <!-- USER LIST -->
+                    <Border Background="White" CornerRadius="12" Padding="24" BorderBrush="#E2E8F0" BorderThickness="1">
+                        <Border.Shadow>
+                            <ThemeShadow />
+                        </Border.Shadow>
+                        <StackPanel Spacing="16">
+                            <!-- Search -->
+                            <StackPanel Spacing="6" MaxWidth="360" HorizontalAlignment="Left">
+                                <TextBlock Text="Search Receptionist Accounts" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                <TextBox x:Name="TxtSearch" PlaceholderText="Search by name or username..." Height="40" CornerRadius="8" BorderBrush="#CBD5E1" Foreground="Black" TextChanged="TxtSearch_TextChanged"/>
+                            </StackPanel>
 
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="4">
-                            <Button Width="32" Height="32" Padding="0" Background="Transparent" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="4">
-                                <FontIcon Glyph="&#xE76B;" FontSize="10"/>
-                            </Button>
+                            <!-- Table -->
+                            <Border BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8">
+                                <StackPanel>
+                                    <!-- Header Row -->
+                                    <Grid Background="#F8FAFC" Padding="16,12" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="1.5*"/>
+                                            <ColumnDefinition Width="1.5*"/>
+                                            <ColumnDefinition Width="2.5*"/>
+                                            <ColumnDefinition Width="3*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="USER ID" FontSize="11" FontWeight="Bold" Foreground="#475569"/>
+                                        <TextBlock Grid.Column="1" Text="FULL NAME" FontSize="11" FontWeight="Bold" Foreground="#475569"/>
+                                        <TextBlock Grid.Column="2" Text="USERNAME" FontSize="11" FontWeight="Bold" Foreground="#475569"/>
+                                        <TextBlock Grid.Column="3" Text="ROLE" FontSize="11" FontWeight="Bold" Foreground="#475569"/>
+                                        <TextBlock Grid.Column="4" Text="STATUS" FontSize="11" FontWeight="Bold" Foreground="#475569"/>
+                                        <TextBlock Grid.Column="5" Text="CREATED DATE" FontSize="11" FontWeight="Bold" Foreground="#475569"/>
+                                        <TextBlock Grid.Column="6" Text="ACTIONS" FontSize="11" FontWeight="Bold" Foreground="#475569" HorizontalAlignment="Right" Margin="0,0,24,0"/>
+                                    </Grid>
 
-                            <Button Content="1" Width="32" Height="32" Padding="0" Background="#0066E2" Foreground="White" FontWeight="Bold" CornerRadius="4"/>
-                            <Button Content="2" Width="32" Height="32" Padding="0" Background="Transparent" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="4"/>
-                            <Button Content="3" Width="32" Height="32" Padding="0" Background="Transparent" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="4"/>
-                            <Button Content="4" Width="32" Height="32" Padding="0" Background="Transparent" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="4"/>
-                            <Button Content="5" Width="32" Height="32" Padding="0" Background="Transparent" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="4"/>
+                                    <!-- Data Rows -->
+                                    <ListView x:Name="UsersListView" SelectionMode="None">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="ListViewItem">
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                <Setter Property="Padding" Value="0"/>
+                                                <Setter Property="BorderBrush" Value="#F1F5F9"/>
+                                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                            </Style>
+                                        </ListView.ItemContainerStyle>
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate x:DataType="local:SystemUserDisplay">
+                                                <Grid Padding="16,10">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="80"/>
+                                                        <ColumnDefinition Width="2*"/>
+                                                        <ColumnDefinition Width="2*"/>
+                                                        <ColumnDefinition Width="1.5*"/>
+                                                        <ColumnDefinition Width="1.5*"/>
+                                                        <ColumnDefinition Width="2.5*"/>
+                                                        <ColumnDefinition Width="3*"/>
+                                                    </Grid.ColumnDefinitions>
 
-                            <Button Width="32" Height="32" Padding="0" Background="Transparent" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="4">
-                                <FontIcon Glyph="&#xE76C;" FontSize="10"/>
-                            </Button>
+                                                    <TextBlock Grid.Column="0" Text="{x:Bind UserId}" FontSize="13" Foreground="#0F172A" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="1" Text="{x:Bind FullName}" FontSize="13" FontWeight="SemiBold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="2" Text="{x:Bind Username}" FontSize="13" Foreground="#475569" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="3" Text="{x:Bind RoleName}" FontSize="13" Foreground="#475569" VerticalAlignment="Center"/>
+
+                                                    <!-- Status badge -->
+                                                    <Border Grid.Column="4" Background="{x:Bind StatusBadgeBg}" BorderBrush="{x:Bind StatusBadgeBorder}" BorderThickness="0.5" CornerRadius="12" Padding="10,4" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                        <TextBlock Text="{x:Bind StatusLabel}" FontSize="11" FontWeight="SemiBold" Foreground="{x:Bind StatusBadgeText}"/>
+                                                    </Border>
+
+                                                    <TextBlock Grid.Column="5" Text="{x:Bind CreatedDate}" FontSize="13" Foreground="#475569" VerticalAlignment="Center"/>
+
+                                                    <!-- Action buttons -->
+                                                    <StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                        <Button Background="#E0F2FE" Foreground="#0369A1" CornerRadius="6" Padding="10,6" Height="30" CommandParameter="{x:Bind UserId}" Click="BtnEdit_Click">
+                                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                                <FontIcon Glyph="&#xE70F;" FontSize="11" Foreground="#0369A1"/>
+                                                                <TextBlock Text="Edit" FontSize="11" FontWeight="Bold"/>
+                                                            </StackPanel>
+                                                        </Button>
+
+                                                        <Button Background="#FEF3C7" Foreground="#B45309" CornerRadius="6" Padding="10,6" Height="30" CommandParameter="{x:Bind UserId}" Click="BtnBlock_Click">
+                                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                                <FontIcon Glyph="&#xF140;" FontSize="11" Foreground="#B45309"/>
+                                                                <TextBlock Text="{x:Bind BlockLabel}" FontSize="11" FontWeight="Bold"/>
+                                                            </StackPanel>
+                                                        </Button>
+
+                                                        <Button Background="#FEE2E2" Foreground="#B91C1C" CornerRadius="6" Padding="10,6" Height="30" CommandParameter="{x:Bind UserId}" Click="BtnDelete_Click">
+                                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                                <FontIcon Glyph="&#xE74D;" FontSize="11" Foreground="#B91C1C"/>
+                                                                <TextBlock Text="Delete" FontSize="11" FontWeight="Bold"/>
+                                                            </StackPanel>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </StackPanel>
+                            </Border>
+
+                            <TextBlock x:Name="TxtEntryCount" Text="Showing 0 entries" FontSize="13" Foreground="#64748B"/>
                         </StackPanel>
-
-                    </Grid>
-                   
-
+                    </Border>
                 </StackPanel>
-            </Border>
-            <Button Content="Settings" 
-                    Background="#0066E2"
-                    Foreground="White"
-                    Width="100"
-                    Height="50"
-                    x:Name="Settingspagbtn" Click="Settingspagbtn_Click"/>
-            <AppBarButton
-                      Icon="Back"
-                      Background="#0066E2" 
-                      Foreground="White" 
-                      HorizontalAlignment="Left" 
-                      Margin="0,8,0,0"
-                CornerRadius="10"
-                x:Name="userreceptionsbackbtn" Click="userreceptionsbackbtn_Click"/>
-
-        </StackPanel>
-      
-    </ScrollViewer>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
 </Page>

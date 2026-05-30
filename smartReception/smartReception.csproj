@@ -69,7 +69,6 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AccessLog.cs" />
     <Compile Include="Access_Control.xaml.cs">
       <DependentUpon>Access_Control.xaml</DependentUpon>
     </Compile>
@@ -112,7 +111,6 @@
     <Compile Include="UsersReceptionist.xaml.cs">
       <DependentUpon>UsersReceptionist.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Visitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

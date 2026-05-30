@@ -36,5 +36,46 @@ namespace smartReception
         {
             Frame.Navigate(typeof(entry));
         }
+
+        private void NavDashboard_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            if (this.GetType() == typeof(dashboard)) return;
+            Frame.Navigate(typeof(dashboard));
+        }
+
+        private void NavAccessControl_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            if (this.GetType() == typeof(Access_Control)) return;
+            Frame.Navigate(typeof(Access_Control));
+        }
+
+        private void NavReports_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            if (this.GetType() == typeof(Reports)) return;
+            Frame.Navigate(typeof(Reports));
+        }
+
+        private void NavLogs_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            if (this.GetType() == typeof(SystemLogs)) return;
+            Frame.Navigate(typeof(SystemLogs));
+        }
+
+        private void NavReceptionists_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            if (this.GetType() == typeof(UsersReceptionist)) return;
+            Frame.Navigate(typeof(UsersReceptionist));
+        }
+
+        private void NavSettings_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            if (this.GetType() == typeof(Settings)) return;
+            Frame.Navigate(typeof(Settings));
+        }
+
+        private void NavLogout_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(LogOut));
+        }
     }
 }

@@ -6,246 +6,205 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="#F1F5F9">
 
+    <Page.Resources>
+        <ThemeShadow x:Name="SharedShadow" />
+        
+        <!-- Sidebar Button Style -->
+        <Style TargetType="Button" x:Key="SidebarButtonStyle">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="24,0,0,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="8"/>
+        </Style>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Style TargetType="Button" x:Key="ActiveSidebarButtonStyle" BasedOn="{StaticResource SidebarButtonStyle}">
+            <Setter Property="Background" Value="#1E293B"/>
+            <Setter Property="Foreground" Value="#10B981"/>
+        </Style>
+    </Page.Resources>
 
-        <StackPanel Padding="20"
-                    Spacing="20">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-            <!-- Page Title -->
-            <TextBlock Text="System Logs"
-                       FontSize="34"
-                       FontWeight="Bold"
-                       Foreground="#1F2937"/>
+        <!-- SIDEBAR NAVIGATION -->
+        <Grid Grid.Column="0" Background="#0F172A" Padding="0,24,0,24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-            <!-- Main Container -->
-            <Border Background="White"
-                    CornerRadius="10"
-                    Padding="20"
-                    BorderBrush="#E5E7EB"
-                    BorderThickness="1">
+            <!-- Sidebar Header -->
+            <StackPanel Grid.Row="0" Padding="24,0,24,32" Spacing="8">
+                <Image Source="/Assets/cemlogo_transparent.png" Height="45" HorizontalAlignment="Left"/>
+                <TextBlock Text="CEMENTERS PLAZA" Foreground="#10B981" FontSize="11" FontWeight="Bold" CharacterSpacing="100"/>
+                <TextBlock Text="Central Administration" Foreground="#64748B" FontSize="12"/>
+            </StackPanel>
 
-                <StackPanel Spacing="20">
+            <!-- Navigation Links -->
+            <StackPanel Grid.Row="1" Spacing="4" Padding="12,0">
+                <StackPanel.Resources>
+                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#1E293B"/>
+                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="#10B981"/>
+                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#0F172A"/>
+                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="#10B981"/>
+                </StackPanel.Resources>
+                <Button Content="📊  Dashboard" Click="NavDashboard_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="📜  Access Logs" Click="NavAccessControl_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="📈  General Reports" Click="NavReports_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="📜  System Logs" Click="NavLogs_Click" Style="{StaticResource ActiveSidebarButtonStyle}"/>
+                <Button Content="👥  Receptionists" Click="NavReceptionists_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="⚙️  Settings" Click="NavSettings_Click" Style="{StaticResource SidebarButtonStyle}"/>
+            </StackPanel>
 
-                    <!-- Header -->
-                    <Grid>
+            <!-- Footer / Log Out -->
+            <StackPanel Grid.Row="2" Padding="12,0" Spacing="8">
+                <Rectangle Height="1" Fill="#1E293B" Margin="0,0,0,12"/>
+                <Button Content="🚪  Sign Out" Click="NavLogout_Click" Style="{StaticResource SidebarButtonStyle}"/>
+            </StackPanel>
+        </Grid>
 
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+        <!-- MAIN CONTENT -->
+        <Grid Grid.Column="1">
+            <Grid.Resources>
+                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#059669"/>
+                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
+                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#047857"/>
+                <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                        <TextBlock Text="Filter Logs"
-                                   FontSize="20"
-                                   FontWeight="SemiBold"
-                                   VerticalAlignment="Center"/>
+            <!-- Header -->
+            <Grid Grid.Row="0" Background="White" Padding="32,20" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="System Audit Logs" FontSize="26" FontWeight="Bold" Foreground="#0F172A"/>
+                    <TextBlock Text="Track administrator actions, receptionist logins and critical database synchronization events" Foreground="#64748B" FontSize="13"/>
+                </StackPanel>
+            </Grid>
 
-                        <Button Grid.Column="1"
-                                Content="Export Logs"
-                                Background="#2563EB"
-                                Foreground="White"
-                                Padding="20,10"/>
-                    </Grid>
-
-                    <!-- Filters -->
-                    <Grid ColumnSpacing="12">
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Search User -->
-                        <StackPanel Grid.Column="0"
-                                    Spacing="5">
-
-                            <TextBlock Text="Search User"
-                                       FontSize="13"
-                                       Foreground="#374151"/>
-
-                            <TextBox Height="40"
-                                     PlaceholderText="Search by user name..."/>
-                        </StackPanel>
-
-                        <!-- Activity -->
-                        <StackPanel Grid.Column="1"
-                                    Spacing="5">
-
-                            <TextBlock Text="Activity"
-                                       FontSize="13"
-                                       Foreground="#374151"/>
-
-                            <ComboBox Height="40"
-                                      SelectedIndex="0">
-
-                                <ComboBoxItem Content="All Activities"/>
-                                <ComboBoxItem Content="Login"/>
-                                <ComboBoxItem Content="Logout"/>
-                                <ComboBoxItem Content="Access Log"/>
-                                <ComboBoxItem Content="Generate Report"/>
-                                <ComboBoxItem Content="Backup Database"/>
-
-                            </ComboBox>
-                        </StackPanel>
-
-                        <!-- Start Date -->
-                        <StackPanel Grid.Column="2"
-                                    Spacing="5">
-
-                            <TextBlock Text="Start Date"
-                                       FontSize="13"
-                                       Foreground="#374151"/>
-
-                            <DatePicker Height="40"/>
-                        </StackPanel>
-
-                        <!-- End Date -->
-                        <StackPanel Grid.Column="3"
-                                    Spacing="5">
-
-                            <TextBlock Text="End Date"
-                                       FontSize="13"
-                                       Foreground="#374151"/>
-
-                            <DatePicker Height="40"/>
-                        </StackPanel>
-
-                        <!-- Search Button -->
-                        <StackPanel Grid.Column="4"
-                                    VerticalAlignment="Bottom">
-
-                            <Button Content="Search"
-                                    Height="40"
-                                    Background="#2563EB"
-                                    Foreground="White"
-                                    FontWeight="SemiBold"/>
-                        </StackPanel>
-                    </Grid>
-
-                    <!-- Table -->
-                    <Border BorderBrush="#E5E7EB"
-                            BorderThickness="1"
-                            CornerRadius="8">
-
-                        <StackPanel>
-
-                            <!-- Table Header -->
-                            <Grid Background="#F3F4F6"
-                                  Padding="12">
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="80"/>
-                                    <ColumnDefinition Width="1.5*"/>
-                                    <ColumnDefinition Width="1.5*"/>
-                                    <ColumnDefinition Width="1.5*"/>
-                                    <ColumnDefinition Width="3*"/>
-                                    <ColumnDefinition Width="2*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock Text="Log ID"
-                                           FontWeight="Bold"/>
-
-                                <TextBlock Grid.Column="1"
-                                           Text="User"
-                                           FontWeight="Bold"/>
-
-                                <TextBlock Grid.Column="2"
-                                           Text="Role"
-                                           FontWeight="Bold"/>
-
-                                <TextBlock Grid.Column="3"
-                                           Text="Activity"
-                                           FontWeight="Bold"/>
-
-                                <TextBlock Grid.Column="4"
-                                           Text="Description"
-                                           FontWeight="Bold"/>
-
-                                <TextBlock Grid.Column="5"
-                                           Text="Date &amp; Time"
-                                           FontWeight="Bold"/>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Padding="32" Spacing="24">
+                    <!-- Main Container -->
+                    <Border Background="White" CornerRadius="12" Padding="24" BorderBrush="#E2E8F0" BorderThickness="1">
+                        <Border.Shadow>
+                            <ThemeShadow />
+                        </Border.Shadow>
+                        <StackPanel Spacing="20">
+                            <!-- Filters Title / Export Row -->
+                            <Grid>
+                                <TextBlock Text="Filter Audit Trail" FontSize="18" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+                                <Button Grid.Column="1" HorizontalAlignment="Right" Content="📤 Export Audit Log" Background="#1E293B" Foreground="White" Padding="20,10" Height="40" CornerRadius="8"/>
                             </Grid>
 
-                            <!-- Log Rows -->
-                            <ListView BorderThickness="0">
+                            <!-- Filters Grid -->
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                </Grid.ColumnDefinitions>
 
-                            </ListView>
+                                <!-- Search User -->
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="Search Actor" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <TextBox Height="40" CornerRadius="8" BorderBrush="#CBD5E1" PlaceholderText="Username..."/>
+                                </StackPanel>
+
+                                <!-- Activity -->
+                                <StackPanel Grid.Column="1" Spacing="6">
+                                    <TextBlock Text="Activity Group" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <ComboBox Height="40" SelectedIndex="0" CornerRadius="8" BorderBrush="#CBD5E1" HorizontalAlignment="Stretch" Foreground="Black">
+                                        <ComboBoxItem Content="All Activities" Foreground="Black"/>
+                                        <ComboBoxItem Content="Login" Foreground="Black"/>
+                                        <ComboBoxItem Content="Logout" Foreground="Black"/>
+                                        <ComboBoxItem Content="Access Log" Foreground="Black"/>
+                                        <ComboBoxItem Content="Generate Report" Foreground="Black"/>
+                                        <ComboBoxItem Content="Backup Database" Foreground="Black"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <!-- Start Date -->
+                                <StackPanel Grid.Column="2" Spacing="6">
+                                    <TextBlock Text="Start Date" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <DatePicker Height="40" HorizontalAlignment="Stretch" CornerRadius="8" BorderBrush="#CBD5E1"/>
+                                </StackPanel>
+
+                                <!-- End Date -->
+                                <StackPanel Grid.Column="3" Spacing="6">
+                                    <TextBlock Text="End Date" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <DatePicker Height="40" HorizontalAlignment="Stretch" CornerRadius="8" BorderBrush="#CBD5E1"/>
+                                </StackPanel>
+
+                                <!-- Search Button -->
+                                <StackPanel Grid.Column="4" VerticalAlignment="Bottom">
+                                    <Button Content="🔍 Apply Filters" Height="40" Background="#059669" Foreground="White" FontWeight="Bold" CornerRadius="8" HorizontalAlignment="Stretch"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Table container -->
+                            <Border BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Margin="0,10,0,0">
+                                <StackPanel>
+                                    <!-- Table Header -->
+                                    <Grid Background="#F8FAFC" Padding="16,12" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="1.5*"/>
+                                            <ColumnDefinition Width="1.2*"/>
+                                            <ColumnDefinition Width="1.5*"/>
+                                            <ColumnDefinition Width="3*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Text="LOG ID" FontWeight="Bold" FontSize="11" Foreground="#475569"/>
+                                        <TextBlock Grid.Column="1" Text="ACTOR" FontWeight="Bold" FontSize="11" Foreground="#475569"/>
+                                        <TextBlock Grid.Column="2" Text="ROLE" FontWeight="Bold" FontSize="11" Foreground="#475569"/>
+                                        <TextBlock Grid.Column="3" Text="ACTIVITY" FontWeight="Bold" FontSize="11" Foreground="#475569"/>
+                                        <TextBlock Grid.Column="4" Text="DESCRIPTION" FontWeight="Bold" FontSize="11" Foreground="#475569"/>
+                                        <TextBlock Grid.Column="5" Text="DATE &amp; TIME" FontWeight="Bold" FontSize="11" Foreground="#475569"/>
+                                    </Grid>
+
+                                    <!-- ListView placeholder -->
+                                    <ListView SelectionMode="None">
+                                        <!-- Bound at runtime -->
+                                    </ListView>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Footer pagination -->
+                            <Grid Margin="0,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Showing 0 of 0 entries" VerticalAlignment="Center" Foreground="#64748B" FontSize="13"/>
+
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                                    <Button Content="&lt;" Width="36" Height="36" CornerRadius="8"/>
+                                    <Button Content="1" Width="36" Height="36" Background="#059669" Foreground="White" CornerRadius="8"/>
+                                    <Button Content="&gt;" Width="36" Height="36" CornerRadius="8"/>
+                                </StackPanel>
+                            </Grid>
                         </StackPanel>
                     </Border>
-
-                    <!-- Footer -->
-                    <Grid>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Text="Showing 1 to 5 of 0 entries"
-                                   VerticalAlignment="Center"
-                                   Foreground="#6B7280"/>
-
-                        <!-- Pagination -->
-                        <StackPanel Grid.Column="1"
-                                    Orientation="Horizontal"
-                                    Spacing="6">
-
-                            <Button Content="&lt;"
-                                    Width="35"
-                                    Height="35"/>
-
-                            <Button Content="1"
-                                    Width="35"
-                                    Height="35"
-                                    Background="#2563EB"
-                                    Foreground="White"/>
-
-                            <Button Content="2"
-                                    Width="35"
-                                    Height="35"/>
-
-                            <Button Content="3"
-                                    Width="35"
-                                    Height="35"/>
-
-                            <Button Content="4"
-                                    Width="35"
-                                    Height="35"/>
-
-                            <Button Content="5"
-                                    Width="35"
-                                    Height="35"/>
-
-                            <Button Content="&gt;"
-                                    Width="35"
-                                    Height="35"/>
-                        </StackPanel>
-                    </Grid>
                 </StackPanel>
-            </Border>
-            <Button Content="Create Receptionist"
-                    Background="#2563EB"
-                    Foreground="White"
-                    Padding="20,10"
-                    HorizontalAlignment="Left"
-                    CornerRadius="10"
-                    x:Name="createreceptionistbtn" Click="createreceptionistbtn_Click"/>
-            <AppBarButton
-                       Icon="Back"
-                      
-                       Padding="20,10"
-                       HorizontalAlignment="Left"
-                       CornerRadius="10"
-                        Background="#2563EB"
-                         Foreground="White"
-                       x:Name="systemlogs" Click="systemlogs_Click"/>
-        </StackPanel>
-
-    </ScrollViewer>
-   
+            </ScrollViewer>
+        </Grid>
+    </Grid>
 </Page>
