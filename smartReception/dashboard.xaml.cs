@@ -15,25 +15,24 @@ namespace smartReception
         public event PropertyChangedEventHandler PropertyChanged;
         public ObservableCollection<string> VisitorLogs { get; set; } = new ObservableCollection<string>();
 
-        // Binding Properties for Metric Cards
         private string _totalClients = "0";
         public string TotalClients
         {
-            get => _totalClients;
+            get { return _totalClients; }
             set { _totalClients = value; OnPropertyChanged(nameof(TotalClients)); }
         }
 
         private string _activeToday = "0";
         public string ActiveToday
         {
-            get => _activeToday;
+            get { return _activeToday; }
             set { _activeToday = value; OnPropertyChanged(nameof(ActiveToday)); }
         }
 
         private string _entriesToday = "0";
         public string EntriesToday
         {
-            get => _entriesToday;
+            get { return _entriesToday; }
             set { _entriesToday = value; OnPropertyChanged(nameof(EntriesToday)); }
         }
 
@@ -49,7 +48,8 @@ namespace smartReception
             try
             {
                 // 1. Total Clients count
-                var totalRes = await App.SupabaseClient.From<Visitor>().Count(Constants.CountType.Exact);
+                var totalRes = await App.SupabaseClient.From<Visitor>()
+                    .Count(Constants.CountType.Exact);
                 TotalClients = totalRes.ToString();
 
                 // 2. Active Today (Currently Signed In)
@@ -58,32 +58,32 @@ namespace smartReception
                     .Count(Constants.CountType.Exact);
                 ActiveToday = activeRes.ToString();
 
-                // 3. Entries Today (Filtered by date)
-                var today = DateTime.Now.ToString("yyyy-MM-dd");
+                // 3. Entries Today
+                string today = DateTime.Now.ToString("yyyy-MM-dd");
                 var entriesRes = await App.SupabaseClient.From<AccessLog>()
-                    .Filter("access_date", Constants.Operator.Equals, today)
+                    .Filter("visit_date", Constants.Operator.Equals, today)
                     .Count(Constants.CountType.Exact);
                 EntriesToday = entriesRes.ToString();
 
-                // 4. Update Activity List
+                // 4. Recent activity list
                 var recentLogs = await App.SupabaseClient.From<AccessLog>()
                     .Order("id", Constants.Ordering.Descending)
                     .Limit(10)
                     .Get();
 
                 VisitorLogs.Clear();
-                foreach (var log in recentLogs.Models)
+                foreach (AccessLog log in recentLogs.Models)
                 {
-                    VisitorLogs.Add($"Client ID: {log.ClientId} - {log.Status} at {DateTime.Now:HH:mm}");
+                    string name = !string.IsNullOrEmpty(log.ClientName) ? log.ClientName : "Client #" + log.ClientId;
+                    VisitorLogs.Add(name + " - " + log.Status + " at " + DateTime.Now.ToString("HH:mm"));
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Metric Error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine("Metric Error: " + ex.Message);
             }
         }
 
-        // --- REGISTRATION LOGIC ---
         private async void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtFirst.Text) || string.IsNullOrWhiteSpace(txtEmail.Text))
@@ -94,7 +94,7 @@ namespace smartReception
 
             try
             {
-                var newClient = new Visitor
+                Visitor newClient = new Visitor
                 {
                     FirstName = txtFirst.Text.Trim(),
                     LastName = txtLast.Text.Trim(),
@@ -104,21 +104,17 @@ namespace smartReception
                 };
 
                 await App.SupabaseClient.From<Visitor>().Insert(newClient);
-
-                ShowFeedback($"✅ {newClient.FirstName} Registered!", true);
-
-                // Reset Form
+                ShowFeedback("✅ " + newClient.FirstName + " Registered!", true);
                 txtFirst.Text = txtLast.Text = txtEmail.Text = txtPhone.Text = txtNIN.Text = "";
                 await RefreshDashboardMetrics();
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Save Error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine("Save Error: " + ex.Message);
                 ShowFeedback("❌ Save failed. Email might already exist.", false);
             }
         }
 
-        // --- ACCESS CONTROL LOGIC ---
         private async void btnVerify_Click(object sender, RoutedEventArgs e)
         {
             string searchName = txtSearch.Text.Trim();
@@ -127,54 +123,63 @@ namespace smartReception
             try
             {
                 var result = await App.SupabaseClient.From<Visitor>()
-                    .Filter("first_name", Constants.Operator.ILike, $"%{searchName}%").Get();
+                    .Filter("first_name", Constants.Operator.ILike, "%" + searchName + "%")
+                    .Get();
 
                 if (result.Models.Any())
                 {
-                    var client = result.Models.First();
+                    Visitor client = result.Models.First();
+
                     var activeLog = await App.SupabaseClient.From<AccessLog>()
-                        .Filter("client_id", Constants.Operator.Equals, client.Id)
+                        .Filter("client_id", Constants.Operator.Equals, client.Id.ToString())
                         .Filter("status", Constants.Operator.Equals, "Signed In")
                         .Get();
 
                     if (activeLog.Models.Any())
                     {
-                        var logToUpdate = activeLog.Models.First();
+                        AccessLog logToUpdate = activeLog.Models.First();
                         logToUpdate.Status = "Signed Out";
                         await App.SupabaseClient.From<AccessLog>().Update(logToUpdate);
-                        ShowFeedback($"✅ {client.FirstName} Signed Out", true);
+                        ShowFeedback("✅ " + client.FirstName + " Signed Out", true);
                     }
                     else
                     {
-                        var newLog = new AccessLog { ClientId = client.Id, Status = "Signed In" };
+                        // FIXED: ClientId is int, use client.Id directly (no .ToString())
+                        AccessLog newLog = new AccessLog
+                        {
+                            ClientId = client.Id,
+                            Status = "Signed In"
+                        };
                         await App.SupabaseClient.From<AccessLog>().Insert(newLog);
-                        ShowFeedback($"✅ Access Granted: {client.FirstName}", true);
+                        ShowFeedback("✅ Access Granted: " + client.FirstName, true);
                     }
 
                     await RefreshDashboardMetrics();
                 }
                 else
                 {
-                    ShowFeedback("❌ Access Denied: Client Not Found .", false);
+                    ShowFeedback("❌ Access Denied: Client Not Found.", false);
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Verify Error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine("Verify Error: " + ex.Message);
             }
         }
 
         private void ShowFeedback(string message, bool isSuccess)
         {
             txtStatusFeedback.Text = message;
-            txtStatusFeedback.Foreground = isSuccess ?
-                new SolidColorBrush(Windows.UI.Colors.Green) :
-                new SolidColorBrush(Windows.UI.Colors.Red);
+            txtStatusFeedback.Foreground = isSuccess
+                ? new SolidColorBrush(Windows.UI.Colors.Green)
+                : new SolidColorBrush(Windows.UI.Colors.Red);
             borderFeedback.Visibility = Visibility.Visible;
         }
 
-        private void OnPropertyChanged(string name) =>
+        private void OnPropertyChanged(string name)
+        {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
 
         private void repentryclientsbtn_Click(object sender, RoutedEventArgs e)
         {
@@ -184,7 +189,6 @@ namespace smartReception
         private void receptionistdashbordbackbtn_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(reception));
-
         }
     }
 }

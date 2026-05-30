@@ -95,17 +95,17 @@
                 <ColumnDefinition Width="120"/>
             </Grid.ColumnDefinitions>
 
+            <!-- FIX: TextChanged now points to TxtSearch_TextChanged -->
             <Border Grid.Column="0" Background="White" BorderBrush="#AED581"
                     BorderThickness="1" CornerRadius="6" Margin="0,0,10,0">
                 <TextBox x:Name="TxtSearchName"
                          PlaceholderText="🔍  Search by name or NIN..."
                          Background="Transparent" BorderThickness="0"
                          Padding="10,7" FontSize="13" Foreground="#111111"
-                         TextChanged="FilterCriteria_Changed"/>
-                
+                         TextChanged="TxtSearch_TextChanged"/>
             </Border>
-          
 
+            <!-- FIX: SelectionChanged now points to CboFloor_SelectionChanged -->
             <Border Grid.Column="1" Background="White" BorderBrush="#AED581"
                     BorderThickness="1" CornerRadius="6" Margin="0,0,10,0">
                 <ComboBox x:Name="CboFilterFloor"
@@ -113,13 +113,12 @@
                           HorizontalAlignment="Stretch"
                           Background="Transparent" BorderThickness="0"
                           Padding="8,5" FontSize="13" Foreground="#111111"
-                          SelectionChanged="FilterCriteria_Changed">
+                          SelectionChanged="CboFloor_SelectionChanged">
                     <ComboBoxItem Content="All Floors" Tag="All"/>
                     <ComboBoxItem Content="1st Floor"  Tag="1"/>
                     <ComboBoxItem Content="2nd Floor"  Tag="2"/>
                 </ComboBox>
             </Border>
-            
 
             <Button x:Name="BtnRefresh"
                     Grid.Column="2"
@@ -134,14 +133,15 @@
                     <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#388E3C"/>
                     <SolidColorBrush x:Key="ButtonBackgroundPressed"     Color="#1B5E20"/>
                 </Button.Resources>
-                
             </Button>
+
             <Button Grid.Column="3"
                     Content="Enter Client"
                     Background="Green"
-                    Foreground="white"
-                  x:Name="enterclientsbtn" Click="enterclientsbtn_Click" />
-            <AppBarButton 
+                    Foreground="White"
+                    x:Name="enterclientsbtn" Click="enterclientsbtn_Click"/>
+
+            <AppBarButton
                 Grid.Column="4"
                 Icon="Back"
                 Background="DarkGreen"
@@ -149,8 +149,6 @@
                 Label="back"
                 CornerRadius="10"
                 x:Name="backbtnMD" Click="backbtnMD_Click"/>
-
-
         </Grid>
 
         <!-- PIVOT TABS -->
@@ -214,11 +212,8 @@
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
-                        
                     </ListView>
-                    
                 </Grid>
-
             </PivotItem>
 
             <!-- TAB 2 — General Visitor History -->
@@ -331,12 +326,10 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                  
                 </Grid>
-              
             </PivotItem>
 
         </Pivot>
-      
+
     </Grid>
 </Page>

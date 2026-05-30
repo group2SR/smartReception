@@ -1,178 +1,303 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Postgrest.Attributes;
-using Postgrest.Models;
-using System.Linq;
 
 namespace smartReception
 {
-    [Table("clients")]
-    public class Client : BaseModel
-    {
-        [PrimaryKey("id", false)] public int id { get; set; }
-        [Column("first_name")] public string first_name { get; set; }
-        [Column("last_name")] public string last_name { get; set; }
-        [Column("email")] public string email { get; set; }
-        [Column("phone_number")] public string phone_number { get; set; }
-        [Column("nin")] public string nin { get; set; }
-        [Column("floor_id")] public int? floor_id { get; set; }
-        [Column("start_date")] public DateTime start_date { get; set; }
-        [Column("end_date")] public DateTime? end_date { get; set; }
-    }
-
     public sealed partial class entry : Page
     {
-        public RegisterViewModel vm { get; set; } = new RegisterViewModel();
-        public ObservableCollection<ClientDisplayModel> Clients { get; set; } = new ObservableCollection<ClientDisplayModel>();
+        private static readonly HttpClient _http = new HttpClient();
 
-        private int? editingClientId = null;
+        private readonly ObservableCollection<ClientDisplayModel> _clients =
+            new ObservableCollection<ClientDisplayModel>();
+
+        private int? _editingClientId = null;
 
         public entry()
         {
             this.InitializeComponent();
-            this.DataContext = vm;
 
-            // Set default dates to today
-            vm.StartDate = DateTimeOffset.Now;
-            vm.EndDate = DateTimeOffset.Now.AddDays(1);
+            _http.DefaultRequestHeaders.Clear();
+            _http.DefaultRequestHeaders.Add("apikey", App.SupabaseAnonKey);
+            _http.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", App.SupabaseAnonKey);
+            _http.DefaultRequestHeaders.Add("Accept", "application/json");
+
+            ClientsListView.ItemsSource = _clients;
+
+            DpStart.Date = DateTimeOffset.Now;
+            DpEnd.Date = DateTimeOffset.Now.AddDays(30);
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            await LoadClients();
+            await LoadClientsAsync();
         }
 
-        public async Task LoadClients()
+        // ── LOAD ───────────────────────────────────────────────────────────
+
+        private async Task LoadClientsAsync()
         {
             try
             {
-                var result = await App.SupabaseClient.From<Client>().Get();
+                string url = App.SupabaseUrl +
+                             "/rest/v1/client" +
+                             "?select=client_id,first_name,last_name,email,phone_number,nin,floor_id,start_date,end_date," +
+                             "floors!client_floor_id_fkey(floor_id,floor_name)" +
+                             "&order=client_id.desc";
 
-                // Ensure UI updates happen on the UI thread
-                await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                HttpResponseMessage response = await _http.GetAsync(url);
+                string json = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Supabase error: " + json);
+
+                _clients.Clear();
+
+                using (JsonDocument doc = JsonDocument.Parse(json))
                 {
-                    Clients.Clear();
-                    foreach (var item in result.Models)
+                    foreach (JsonElement row in doc.RootElement.EnumerateArray())
                     {
-                        Clients.Add(new ClientDisplayModel
+                        JsonElement floor = default;
+                        if (row.TryGetProperty("floors", out JsonElement fl) &&
+                            fl.ValueKind != JsonValueKind.Null)
                         {
-                            clientID = item.id,
-                            FullName = $"{item.first_name} {item.last_name}".Trim(),
-                            Email = item.email,
-                            NIN = item.nin,
-                            FloorID = item.floor_id.HasValue ? $"Floor {item.floor_id}" : "General",
-                            startDate = item.start_date,
-                            endDate = item.end_date ?? DateTime.Now
+                            floor = fl.ValueKind == JsonValueKind.Array
+                                ? (fl.GetArrayLength() > 0 ? fl[0] : default)
+                                : fl;
+                        }
+
+                        string floorName = GetStr(floor, "floor_name") ?? "Unknown";
+                        int? floorId = GetNullableInt(row, "floor_id");
+
+                        string rawStart = GetStr(row, "start_date") ?? "";
+                        string rawEnd = GetStr(row, "end_date") ?? "";
+
+                        DateTime startDate = DateTime.TryParse(rawStart, out DateTime sd) ? sd : DateTime.Now;
+                        DateTime endDate = DateTime.TryParse(rawEnd, out DateTime ed) ? ed : DateTime.Now;
+
+                        _clients.Add(new ClientDisplayModel
+                        {
+                            ClientID = GetInt(row, "client_id"),
+                            FullName = (GetStr(row, "first_name") + " " + GetStr(row, "last_name")).Trim(),
+                            Email = GetStr(row, "email") ?? "",
+                            NIN = GetStr(row, "nin") ?? "",
+                            FloorName = floorName,
+                            FloorID = floorId,
+                            StartDate = startDate,
+                            EndDate = endDate
                         });
                     }
-                });
+                }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("Database Load Error: " + ex.Message);
+                await ShowMessageAsync("Load error: " + ex.Message);
             }
         }
+
+        // ── SAVE (INSERT or UPDATE) ────────────────────────────────────────
+
+        private async void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            string firstName = TxtFirstName.Text.Trim();
+            string lastName = TxtLastName.Text.Trim();
+            string email = TxtEmail.Text.Trim();
+            string phone = TxtPhone.Text.Trim();
+            string nin = TxtNIN.Text.Trim();
+            int floorId = cmbfloor.SelectedIndex + 1;
+
+            if (string.IsNullOrEmpty(firstName))
+            {
+                await ShowMessageAsync("First Name is required.");
+                return;
+            }
+            if (string.IsNullOrEmpty(email))
+            {
+                await ShowMessageAsync("Email is required.");
+                return;
+            }
+            if (string.IsNullOrEmpty(phone))
+            {
+                await ShowMessageAsync("Phone Number is required.");
+                return;
+            }
+            if (cmbfloor.SelectedIndex == -1)
+            {
+                await ShowMessageAsync("Please select a floor.");
+                return;
+            }
+
+            string startDate = DpStart.Date?.ToString("yyyy-MM-dd") ?? DateTime.Now.ToString("yyyy-MM-dd");
+            string endDate = DpEnd.Date?.ToString("yyyy-MM-dd");
+
+            var payload = new Dictionary<string, object>
+            {
+                ["first_name"] = firstName,
+                ["last_name"] = lastName,
+                ["email"] = email,
+                ["phone_number"] = phone,
+                ["nin"] = nin,
+                ["floor_id"] = floorId,
+                ["start_date"] = startDate
+            };
+            if (endDate != null) payload["end_date"] = endDate;
+
+            string body = JsonSerializer.Serialize(payload);
+
+            try
+            {
+                HttpResponseMessage response;
+
+                if (_editingClientId.HasValue)
+                {
+                    // ── UPDATE existing client ─────────────────────────────
+                    string url = App.SupabaseUrl +
+                                 "/rest/v1/client?client_id=eq." + _editingClientId.Value;
+
+                    var request = new HttpRequestMessage(new HttpMethod("PATCH"), url)
+                    {
+                        Content = new StringContent(body, Encoding.UTF8, "application/json")
+                    };
+                    request.Headers.Add("Prefer", "return=minimal");
+                    response = await _http.SendAsync(request);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string err = await response.Content.ReadAsStringAsync();
+                        throw new Exception(err);
+                    }
+
+                    await ShowMessageAsync("Client updated successfully.");
+                }
+                else
+                {
+                    // ── INSERT new client and get back the new client_id ───
+                    string url = App.SupabaseUrl + "/rest/v1/client";
+                    var request = new HttpRequestMessage(HttpMethod.Post, url)
+                    {
+                        Content = new StringContent(body, Encoding.UTF8, "application/json")
+                    };
+                    // return=representation so we get the inserted row with its client_id
+                    request.Headers.Add("Prefer", "return=representation");
+                    response = await _http.SendAsync(request);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string err = await response.Content.ReadAsStringAsync();
+                        throw new Exception(err);
+                    }
+
+                    // ── Parse the new client_id from the response ──────────
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    int newClientId = 0;
+
+                    using (JsonDocument doc = JsonDocument.Parse(responseJson))
+                    {
+                        // Response is an array with one element
+                        JsonElement root = doc.RootElement;
+                        JsonElement inserted = root.ValueKind == JsonValueKind.Array
+                            ? root[0] : root;
+
+                        newClientId = GetInt(inserted, "client_id");
+                    }
+
+                    // ── Auto sign-in: create access_log entry ──────────────
+                    if (newClientId > 0)
+                    {
+                        await CreateAccessLogAsync(newClientId);
+                    }
+
+                    await ShowMessageAsync("Client registered and signed in successfully.");
+                }
+
+                ClearForm();
+                await LoadClientsAsync();
+                rootPivot.SelectedIndex = 1;
+            }
+            catch (Exception ex)
+            {
+                await ShowMessageAsync("Save failed: " + ex.Message);
+            }
+        }
+
+        // ── AUTO SIGN-IN ───────────────────────────────────────────────────
+
+        private async Task CreateAccessLogAsync(int clientId)
+        {
+            try
+            {
+                var logPayload = new Dictionary<string, object>
+                {
+                    ["client_id"] = clientId,
+                    ["access_date"] = DateTime.Now.ToString("yyyy-MM-dd"),
+                    ["time_in"] = DateTime.Now.ToString("HH:mm:ss"),
+                    ["status"] = "Signed In"
+                };
+
+                string logBody = JsonSerializer.Serialize(logPayload);
+                string logUrl = App.SupabaseUrl + "/rest/v1/access_logs";
+
+                var logRequest = new HttpRequestMessage(HttpMethod.Post, logUrl)
+                {
+                    Content = new StringContent(logBody, Encoding.UTF8, "application/json")
+                };
+                logRequest.Headers.Add("Prefer", "return=minimal");
+
+                HttpResponseMessage logResponse = await _http.SendAsync(logRequest);
+
+                if (!logResponse.IsSuccessStatusCode)
+                {
+                    string err = await logResponse.Content.ReadAsStringAsync();
+                    // Don't block the user — just log the warning
+                    System.Diagnostics.Debug.WriteLine("Access log creation failed: " + err);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Access log error: " + ex.Message);
+            }
+        }
+
+        // ── EDIT ───────────────────────────────────────────────────────────
 
         private void btnEdit_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as Button)?.CommandParameter is int id)
             {
-                var clientToEdit = Clients.FirstOrDefault(c => c.clientID == id);
-                if (clientToEdit != null)
-                {
-                    // Logic to split names correctly
-                    string[] nameParts = clientToEdit.FullName.Split(new[] { ' ' }, 2);
-                    vm.FirstName = nameParts[0];
-                    vm.LastName = nameParts.Length > 1 ? nameParts[1] : "";
-                    vm.Email = clientToEdit.Email;
-                    vm.NIN = clientToEdit.NIN;
+                ClientDisplayModel client = null;
+                foreach (var c in _clients)
+                    if (c.ClientID == id) { client = c; break; }
 
-                    vm.StartDate = new DateTimeOffset(clientToEdit.startDate);
-                    vm.EndDate = new DateTimeOffset(clientToEdit.endDate);
+                if (client == null) return;
 
-                    // Floor selection logic
-                    if (clientToEdit.FloorID.Contains("Floor"))
-                    {
-                        if (int.TryParse(clientToEdit.FloorID.Replace("Floor ", ""), out int fId))
-                        {
-                            cmbfloor.SelectedIndex = fId - 1;
-                        }
-                    }
+                string[] parts = client.FullName.Split(new[] { ' ' }, 2);
+                TxtFirstName.Text = parts[0];
+                TxtLastName.Text = parts.Length > 1 ? parts[1] : "";
+                TxtEmail.Text = client.Email ?? "";
+                TxtNIN.Text = client.NIN ?? "";
 
-                    editingClientId = id;
+                cmbfloor.SelectedIndex = client.FloorID.HasValue ? client.FloorID.Value - 1 : -1;
 
-                    // Switch to Registration tab and scroll to top
-                    rootPivot.SelectedIndex = 0;
-                }
+                DpStart.Date = new DateTimeOffset(client.StartDate);
+                DpEnd.Date = new DateTimeOffset(client.EndDate);
+
+                _editingClientId = id;
+                rootPivot.SelectedIndex = 0;
             }
         }
 
-        private async void btnSave(object sender, RoutedEventArgs e)
-        {
-            // Validation with high visibility alerts
-            if (string.IsNullOrWhiteSpace(vm.FirstName) || string.IsNullOrWhiteSpace(vm.Email))
-            {
-                await showmessage("Attention: First Name and Email are required to sync.");
-                return;
-            }
-
-            var clientData = new Client
-            {
-                first_name = vm.FirstName,
-                last_name = vm.LastName ?? "",
-                email = vm.Email,
-                nin = vm.NIN ?? "",
-                floor_id = cmbfloor.SelectedIndex != -1 ? cmbfloor.SelectedIndex + 1 : (int?)null,
-                start_date = vm.StartDate?.DateTime ?? DateTime.Now,
-                end_date = vm.EndDate?.DateTime
-            };
-
-            try
-            {
-                if (editingClientId.HasValue)
-                {
-                    // Update existing record
-                    await App.SupabaseClient.From<Client>()
-                        .Where(x => x.id == editingClientId.Value)
-                        .Update(clientData);
-                    await showmessage("Success: Visitor record updated.");
-                }
-                else
-                {
-                    // Insert new record
-                    await App.SupabaseClient.From<Client>().Insert(clientData);
-                    await showmessage("Success: New visitor synced to cloud.");
-                }
-
-                ClearForm();
-                await LoadClients();
-
-                // Switch to database view to see the new entry
-                rootPivot.SelectedIndex = 1;
-            }
-            catch (Exception ex)
-            {
-                await showmessage("Connection Error: " + ex.Message);
-            }
-        }
-
-        private void ClearForm()
-        {
-            vm.FirstName = "";
-            vm.LastName = "";
-            vm.Email = "";
-            vm.NIN = "";
-            cmbfloor.SelectedIndex = -1;
-            vm.StartDate = DateTimeOffset.Now;
-            vm.EndDate = DateTimeOffset.Now.AddDays(1);
-            editingClientId = null;
-        }
+        // ── DELETE ─────────────────────────────────────────────────────────
 
         private async void btnDelete_Click(object sender, RoutedEventArgs e)
         {
@@ -180,22 +305,64 @@ namespace smartReception
             {
                 try
                 {
-                    await App.SupabaseClient.From<Client>().Where(x => x.id == id).Delete();
-                    await LoadClients();
+                    string url = App.SupabaseUrl + "/rest/v1/client?client_id=eq." + id;
+                    HttpResponseMessage response = await _http.DeleteAsync(url);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string err = await response.Content.ReadAsStringAsync();
+                        throw new Exception(err);
+                    }
+
+                    await LoadClientsAsync();
                 }
                 catch (Exception ex)
                 {
-                    await showmessage("Delete failed: Check your internet connection.");
+                    await ShowMessageAsync("Delete failed: " + ex.Message);
                 }
             }
         }
 
-        private async Task showmessage(string v)
+        // ── HELPERS ────────────────────────────────────────────────────────
+
+        private void ClearForm()
         {
-            await new MessageDialog(v, "Smart Reception System").ShowAsync();
+            TxtFirstName.Text = "";
+            TxtLastName.Text = "";
+            TxtEmail.Text = "";
+            TxtPhone.Text = "";
+            TxtNIN.Text = "";
+            cmbfloor.SelectedIndex = -1;
+            DpStart.Date = DateTimeOffset.Now;
+            DpEnd.Date = DateTimeOffset.Now.AddDays(30);
+            _editingClientId = null;
         }
 
-      
+        private async Task ShowMessageAsync(string message)
+        {
+            await new MessageDialog(message, "Smart Reception").ShowAsync();
+        }
+
+        private static string GetStr(JsonElement el, string prop)
+        {
+            return el.TryGetProperty(prop, out JsonElement v) && v.ValueKind != JsonValueKind.Null
+                ? v.GetString() : null;
+        }
+
+        private static int GetInt(JsonElement el, string prop)
+        {
+            return el.TryGetProperty(prop, out JsonElement v) && v.ValueKind == JsonValueKind.Number
+                ? v.GetInt32() : 0;
+        }
+
+        private static int? GetNullableInt(JsonElement el, string prop)
+        {
+            return el.TryGetProperty(prop, out JsonElement v) && v.ValueKind == JsonValueKind.Number
+                ? v.GetInt32() : (int?)null;
+        }
+
+        // ── NAVIGATION ─────────────────────────────────────────────────────
+
         private void generalreportsbtn_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(Reports));
@@ -204,7 +371,6 @@ namespace smartReception
         private void backbtnentry_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(MasterDashboard));
-
         }
     }
 }
