@@ -29,9 +29,31 @@ namespace smartReception
 
         private void cancelbtn_Click(object sender, RoutedEventArgs e)
         {
-            if (Frame.CanGoBack) {
+            if (Frame.CanGoBack)
+            {
                 Frame.GoBack();
+            }
+        }
+
+        private async void logoutbtn_Click(object sender, RoutedEventArgs e)
+        {
+
+            ContentDialog logoutDialog = new ContentDialog
+            {
+                Title = "Logout",
+                Content = "Are you sure you want to logout?",
+                PrimaryButtonText = "Logout",
+                CloseButtonText = "Cancel"
+            };
+
+            ContentDialogResult result = await logoutDialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                // Navigate to login page
+                Frame.Navigate(typeof(MainPage));
             }
         }
     }
 }
+

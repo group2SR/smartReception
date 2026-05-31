@@ -87,11 +87,13 @@
                            FontWeight="SemiLight"/>
 
                         <TextBox PlaceholderText="Enter Name"
-                     Header="Name"/>
+                                  Header="Name"
+                                 x:Name="Txtusername"/>
 
-                        <TextBox PlaceholderText="Enter Password"
-                     Header="Password"
-                     Margin="0,15"/>
+                        <PasswordBox PlaceholderText="Enter Password"
+                                     Header="Password"
+                                     Margin="0,15"
+                                     x:Name="TxtPassword"/>
 
                         <Button Content="Enter"
                     HorizontalAlignment="Center"
