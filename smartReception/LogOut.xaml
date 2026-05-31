@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="smartReception.LogOut"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,23 +6,24 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="#F4F7F9">
+    Background="#F1F5F9">
 
     <Grid Background="Transparent">
-        <Border Width="420" 
-                Height="380" 
+        <!-- Semi-transparent overlay to resemble a modal backdrop if navigated to -->
+        <Border Width="440" 
+                Height="360" 
                 Background="White" 
-                CornerRadius="8" 
+                CornerRadius="16" 
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Center"
-                BorderBrush="#EAEAEA"
+                BorderBrush="#E2E8F0"
                 BorderThickness="1">
 
             <Border.Shadow>
                 <ThemeShadow />
             </Border.Shadow>
 
-            <Grid Padding="30,24,30,24">
+            <Grid Padding="36,32">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -30,30 +31,31 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,12">
-                    <Ellipse Width="60" Height="60" Fill="#FFF0ED"/>
-                    <FontIcon Glyph="&#xE7E8;" Foreground="#F04438" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Grid Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,16">
+                    <Ellipse Width="64" Height="64" Fill="#FEE2E2"/>
+                    <FontIcon Glyph="&#xE7E8;" Foreground="#EF4444" FontSize="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
 
-                <StackPanel Grid.Row="1" HorizontalAlignment="Center" Margin="0,0,0,18">
-                    <TextBlock Text="Logout" 
+                <StackPanel Grid.Row="1" HorizontalAlignment="Center" Margin="0,0,0,24" Spacing="8">
+                    <TextBlock Text="Sign Out" 
                                FontSize="24" 
                                FontWeight="Bold" 
-                               Foreground="#1D2939" 
-                               HorizontalAlignment="Center" 
-                               Margin="0,0,0,8"/>
-                    <TextBlock Text="Are you sure you want to logout from the system?" 
-                               FontSize="13" 
-                               Foreground="#475467" 
+                               Foreground="#0F172A" 
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Are you sure you want to sign out of the system?" 
+                               FontSize="14" 
+                               Foreground="#64748B" 
                                HorizontalAlignment="Center"
+                               TextAlignment="Center"
                                TextWrapping="Wrap"/>
                 </StackPanel>
 
+                <!-- Profile Info / Context -->
                 <Border Grid.Row="2" 
                         Background="#F8FAFC" 
                         BorderBrush="#E2E8F0" 
                         BorderThickness="1" 
-                        CornerRadius="6" 
+                        CornerRadius="12" 
                         Padding="16,12" 
                         Margin="0,0,0,24"
                         VerticalAlignment="Top">
@@ -64,22 +66,13 @@
                         </Grid.ColumnDefinitions>
 
                         <Grid Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
-                            <Ellipse Width="48" Height="48" Fill="#E0E9F6"/>
-                            <FontIcon Glyph="&#xE77B;" Foreground="#3B82F6" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="44" Height="44" Fill="#E2E8F0"/>
+                            <FontIcon Glyph="&#xE77B;" Foreground="#475569" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Grid>
 
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="Administrator" FontSize="15" FontWeight="SemiBold" Foreground="#1E293B" Margin="0,0,0,4"/>
-
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
-                                <TextBlock Text="Role:" FontSize="12" Foreground="#64748B" Width="45"/>
-                                <TextBlock Text="Administrator" FontSize="12" Foreground="#334155" FontWeight="Medium"/>
-                            </StackPanel>
-
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Email:" FontSize="12" Foreground="#64748B" Width="45"/>
-                                <TextBlock Text="admin@building.com" FontSize="12" Foreground="#334155" FontWeight="Medium"/>
-                            </StackPanel>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                            <TextBlock Text="Cementers Plaza Session" FontSize="15" FontWeight="Bold" Foreground="#0F172A"/>
+                            <TextBlock Text="Active User Session" FontSize="12" Foreground="#64748B"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -87,41 +80,47 @@
                 <Grid Grid.Row="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="16"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="0" 
                             Content="Cancel" 
                             HorizontalAlignment="Stretch" 
-                            Height="40"
-                            Background="#D2D6DC" 
-                            Foreground="#1F2937" 
+                            Height="44"
+                            Background="#E2E8F0" 
+                            Foreground="#475569" 
                             FontSize="14"
                             FontWeight="SemiBold"
-                            CornerRadius="6"
+                            CornerRadius="8"
                             x:Name="cancelbtn" Click="cancelbtn_Click">
                         <Button.Resources>
-                            <ResourceDictionary>
-                                <StaticResource x:Key="ButtonBackgroundPointerOver" ResourceKey="SystemControlPageBackgroundAltHighBrush"/>
-                            </ResourceDictionary>
+                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#CBD5E1"/>
+                            <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="#334155"/>
+                            <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#94A3B8"/>
+                            <SolidColorBrush x:Key="ButtonForegroundPressed" Color="#1E293B"/>
                         </Button.Resources>
                     </Button>
 
                     <Button Grid.Column="2" 
                             HorizontalAlignment="Stretch" 
-                            Height="40"
-                            Background="#D92D20" 
+                            Height="44"
+                            Background="#EF4444" 
                             Foreground="White" 
-                            CornerRadius="6"
+                            CornerRadius="8"
                             x:Name="logoutbtn" Click="logoutbtn_Click">
+                        <Button.Resources>
+                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#DC2626"/>
+                            <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
+                            <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#B91C1C"/>
+                            <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
+                        </Button.Resources>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <FontIcon Glyph="&#xE7E8;" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="Logout" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Text="Sign Out" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                 </Grid>
-
             </Grid>
         </Border>
     </Grid>

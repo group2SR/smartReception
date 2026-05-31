@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -29,8 +29,9 @@ namespace smartReception
             // 2. Visual feedback: Subtle Opacity and Background shift
             if (sender is Grid card)
             {
-                card.Opacity = 0.85;
-                card.Background = new SolidColorBrush(Windows.UI.Colors.WhiteSmoke);
+                card.Opacity = 0.9;
+                card.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 241, 245, 249));
+                card.BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129));
             }
         }
 
@@ -43,13 +44,85 @@ namespace smartReception
             if (sender is Grid card)
             {
                 card.Opacity = 1.0;
-                card.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 243, 244, 246));
+                card.Background = new SolidColorBrush(Windows.UI.Colors.White);
+                card.BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 226, 232, 240));
             }
         }
 
-        private void adminloginbtn_Click(object sender, RoutedEventArgs e)
+        private static string HashPassword(string password)
         {
-            Frame.Navigate(typeof(MasterDashboard));
+            using (var sha = System.Security.Cryptography.SHA256.Create())
+            {
+                byte[] bytes = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                var sb = new System.Text.StringBuilder();
+                foreach (byte b in bytes) sb.Append(b.ToString("x2"));
+                return sb.ToString();
+            }
+        }
+
+        private async void adminloginbtn_Click(object sender, RoutedEventArgs e)
+        {
+            string username = TxtUsername.Text.Trim();
+            string password = TxtPassword.Password.Trim();
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                comment.Text = "Username and password are required.";
+                return;
+            }
+
+            comment.Text = "Authenticating...";
+            adminloginbtn.IsEnabled = false;
+
+            try
+            {
+                using (var http = new System.Net.Http.HttpClient())
+                {
+                    http.DefaultRequestHeaders.Add("apikey", App.SupabaseAnonKey);
+                    http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", App.SupabaseAnonKey);
+                    http.DefaultRequestHeaders.Add("Accept", "application/json");
+
+                    string hashedPwd = HashPassword(password);
+                    string url = $"{App.SupabaseUrl}/rest/v1/system_users?username=eq.{username}&password_hash=eq.{hashedPwd}&role_id=eq.1&select=is_blocked";
+
+                    var response = await http.GetAsync(url);
+                    string json = await response.Content.ReadAsStringAsync();
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        comment.Text = "Authentication error. Please try again.";
+                        return;
+                    }
+
+                    using (var doc = System.Text.Json.JsonDocument.Parse(json))
+                    {
+                        if (doc.RootElement.GetArrayLength() > 0)
+                        {
+                            var user = doc.RootElement[0];
+                            if (user.TryGetProperty("is_blocked", out var blockedProp) && blockedProp.GetBoolean())
+                            {
+                                comment.Text = "Your admin account is blocked.";
+                            }
+                            else
+                            {
+                                Frame.Navigate(typeof(dashboard));
+                            }
+                        }
+                        else
+                        {
+                            comment.Text = "Invalid admin username or password.";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                comment.Text = "Error: " + ex.Message;
+            }
+            finally
+            {
+                adminloginbtn.IsEnabled = true;
+            }
         }
     }
 }
