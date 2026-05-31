@@ -28,6 +28,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- Administrator Account -->
@@ -415,6 +416,45 @@
                     </StackPanel>
                 </Border>
             </Grid>
+
+                <!-- Receptionist Management -->
+<Border Grid.Column="3"
+        Background="White"
+        CornerRadius="12"
+        Padding="24"
+        BorderBrush="#E2E8F0"
+        BorderThickness="1">
+    <StackPanel Spacing="16">
+        <StackPanel Spacing="2">
+            <TextBlock Text="Receptionist Management"
+                       FontSize="15"
+                       FontWeight="SemiBold"
+                       Foreground="#0F172A"/>
+            <TextBlock Text="Create receptionist accounts."
+                       FontSize="12"
+                       Foreground="#94A3B8"/>
+        </StackPanel>
+        <Rectangle Height="1"
+                   Fill="#F1F5F9"/>
+        <TextBox x:Name="TxtReceptionFirstName"
+                 PlaceholderText="First Name"
+                 Height="40"/>
+        <TextBox x:Name="TxtReceptionLastName"
+                 PlaceholderText="Last Name"
+                 Height="40"/>
+        <TextBox x:Name="TxtReceptionUsername"
+                 PlaceholderText="Username"
+                 Height="40"/>
+        <PasswordBox x:Name="PwdReceptionPassword"
+                     PlaceholderText="Password"
+                     Height="40"/>
+        <Button Content="Add Receptionist"
+                Height="40"
+                Background="#16A34A"
+                Foreground="White"
+                Click="BtnAddReceptionist_Click"/>
+    </StackPanel>
+</Border>
 
             <!-- Bottom Nav -->
             <StackPanel Orientation="Horizontal"
