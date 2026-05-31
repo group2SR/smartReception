@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -88,7 +88,7 @@ namespace smartReception
         {
             if (string.IsNullOrWhiteSpace(txtFirst.Text) || string.IsNullOrWhiteSpace(txtEmail.Text))
             {
-                ShowFeedback("⚠ Name and Email are required.", false);
+                ShowFeedback("âš  Name and Email are required.", false);
                 return;
             }
 
@@ -104,14 +104,14 @@ namespace smartReception
                 };
 
                 await App.SupabaseClient.From<Visitor>().Insert(newClient);
-                ShowFeedback("✅ " + newClient.FirstName + " Registered!", true);
+                ShowFeedback("âœ… " + newClient.FirstName + " Registered!", true);
                 txtFirst.Text = txtLast.Text = txtEmail.Text = txtPhone.Text = txtNIN.Text = "";
                 await RefreshDashboardMetrics();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Save Error: " + ex.Message);
-                ShowFeedback("❌ Save failed. Email might already exist.", false);
+                ShowFeedback("âŒ Save failed. Email might already exist.", false);
             }
         }
 
@@ -140,7 +140,7 @@ namespace smartReception
                         AccessLog logToUpdate = activeLog.Models.First();
                         logToUpdate.Status = "Signed Out";
                         await App.SupabaseClient.From<AccessLog>().Update(logToUpdate);
-                        ShowFeedback("✅ " + client.FirstName + " Signed Out", true);
+                        ShowFeedback("âœ… " + client.FirstName + " Signed Out", true);
                     }
                     else
                     {
@@ -151,14 +151,14 @@ namespace smartReception
                             Status = "Signed In"
                         };
                         await App.SupabaseClient.From<AccessLog>().Insert(newLog);
-                        ShowFeedback("✅ Access Granted: " + client.FirstName, true);
+                        ShowFeedback("âœ… Access Granted: " + client.FirstName, true);
                     }
 
                     await RefreshDashboardMetrics();
                 }
                 else
                 {
-                    ShowFeedback("❌ Access Denied: Client Not Found.", false);
+                    ShowFeedback("âŒ Access Denied: Client Not Found.", false);
                 }
             }
             catch (Exception ex)
@@ -189,6 +189,41 @@ namespace smartReception
         private void receptionistdashbordbackbtn_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(reception));
+        }
+
+        private void NavDashboard_Click(object sender, RoutedEventArgs e)
+        {
+            // Already here
+        }
+
+        private void NavAccessControl_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Access_Control));
+        }
+
+        private void NavReports_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Reports));
+        }
+
+        private void NavLogs_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SystemLogs));
+        }
+
+        private void NavReceptionists_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(UsersReceptionist));
+        }
+
+        private void NavSettings_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Settings));
+        }
+
+        private void NavLogout_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(LogOut));
         }
     }
 }

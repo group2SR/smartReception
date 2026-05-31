@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -31,7 +31,7 @@ namespace smartReception
             this.Loaded += async (s, e) => await FetchLatestDatabaseLogsAsync();
         }
 
-        // ── UI EVENT HANDLERS ──────────────────────────────────────────────
+        // â”€â”€ UI EVENT HANDLERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         // FIX: renamed to avoid overload ambiguity that caused silent compile failures
         private void TxtSearch_TextChanged(object sender, TextChangedEventArgs e)
@@ -51,7 +51,7 @@ namespace smartReception
             await FetchLatestDatabaseLogsAsync();
         }
 
-        // ── FILTER ENGINE ──────────────────────────────────────────────────
+        // â”€â”€ FILTER ENGINE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private void ApplyUnifiedUIFilter()
         {
@@ -88,7 +88,7 @@ namespace smartReception
             return filter == "All" || tag == filter;
         }
 
-        // ── DATA FETCH ─────────────────────────────────────────────────────
+        // â”€â”€ DATA FETCH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private async Task FetchLatestDatabaseLogsAsync()
         {
@@ -116,7 +116,7 @@ namespace smartReception
             }
         }
 
-        // ── FETCH: Active clients ──────────────────────────────────────────
+        // â”€â”€ FETCH: Active clients â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private async Task<List<ActiveClientDisplay>> FetchActiveClientsAsync()
         {
@@ -157,6 +157,7 @@ namespace smartReception
 
                     result.Add(new ActiveClientDisplay
                     {
+                        LogId = GetInt(row, "log_id"),
                         FullName = GetStr(client, "first_name") + " " + GetStr(client, "last_name"),
                         NIN = GetStr(client, "nin") ?? "",
                         PhoneNumber = GetStr(client, "phone_number") ?? "",
@@ -170,7 +171,7 @@ namespace smartReception
             return result;
         }
 
-        // ── FETCH: All logs ────────────────────────────────────────────────
+        // â”€â”€ FETCH: All logs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private async Task<List<VisitorLogDisplay>> FetchAllLogsAsync()
         {
@@ -233,7 +234,7 @@ namespace smartReception
             return result;
         }
 
-        // ── FETCH: Deleted clients ─────────────────────────────────────────
+        // â”€â”€ FETCH: Deleted clients â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private async Task<List<DeletedClientDisplay>> FetchDeletedClientsAsync()
         {
@@ -281,7 +282,7 @@ namespace smartReception
             return result;
         }
 
-        // ── HELPERS ────────────────────────────────────────────────────────
+        // â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private async Task<string> GetJsonAsync(string url)
         {
@@ -345,12 +346,80 @@ namespace smartReception
         {
             Frame.Navigate(typeof(MainPage));
         }
+
+        private void NavDashboard_Click(object sender, RoutedEventArgs e)
+        {
+            // Already on Dashboard
+        }
+
+        private void NavRegister_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(entry));
+        }
+
+        private void NavReports_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Reports));
+        }
+
+        private void NavLogs_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SystemLogs));
+        }
+
+        private void NavReceptionists_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(UsersReceptionist));
+        }
+
+        private void NavSettings_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Settings));
+        }
+
+        private void NavLogout_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(LogOut));
+        }
+
+        private async void BtnTimeOut_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is int logId)
+            {
+                try
+                {
+                    var updatePayload = new System.Collections.Generic.Dictionary<string, object>
+                    {
+                        ["status"] = "Signed Out",
+                        ["time_out"] = DateTime.Now.ToString("HH:mm:ss")
+                    };
+
+                    string json = JsonSerializer.Serialize(updatePayload);
+                    var request = new HttpRequestMessage(new HttpMethod("PATCH"), App.SupabaseUrl + "/rest/v1/access_logs?log_id=eq." + logId)
+                    {
+                        Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
+                    };
+                    request.Headers.Add("Prefer", "return=minimal");
+                    
+                    var response = await _http.SendAsync(request);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        await FetchLatestDatabaseLogsAsync();
+                    }
+                }
+                catch
+                {
+                    // Silently fail or ignore for now
+                }
+            }
+        }
     }
 
-    // ── DISPLAY MODEL CLASSES ──────────────────────────────────────────────
+    // â”€â”€ DISPLAY MODEL CLASSES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public class ActiveClientDisplay
     {
+        public int LogId { get; set; }
         public string FullName { get; set; }
         public string NIN { get; set; }
         public string FloorName { get; set; }

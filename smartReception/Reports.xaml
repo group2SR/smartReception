@@ -6,412 +6,275 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="#F5F6FA">
+    Background="#F1F5F9">
 
+    <Page.Resources>
+        <ThemeShadow x:Name="SharedShadow" />
+        
+        <!-- Sidebar Button Style -->
+        <Style TargetType="Button" x:Key="SidebarButtonStyle">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="24,0,0,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="8"/>
+        </Style>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Style TargetType="Button" x:Key="ActiveSidebarButtonStyle" BasedOn="{StaticResource SidebarButtonStyle}">
+            <Setter Property="Background" Value="#1E293B"/>
+            <Setter Property="Foreground" Value="#10B981"/>
+        </Style>
+    </Page.Resources>
 
-        <StackPanel Padding="20" Spacing="20">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- SIDEBAR NAVIGATION -->
+        <Grid Grid.Column="0" Background="#0F172A" Padding="0,24,0,24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Sidebar Header -->
+            <StackPanel Grid.Row="0" Padding="24,0,24,32" Spacing="8">
+                <Image Source="/Assets/cemlogo_transparent.png" Height="45" HorizontalAlignment="Left"/>
+                <TextBlock Text="CEMENTERS PLAZA" Foreground="#10B981" FontSize="11" FontWeight="Bold" CharacterSpacing="100"/>
+                <TextBlock Text="Central Administration" Foreground="#64748B" FontSize="12"/>
+            </StackPanel>
+
+            <!-- Navigation Links -->
+            <StackPanel Grid.Row="1" Spacing="4" Padding="12,0">
+                <StackPanel.Resources>
+                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#1E293B"/>
+                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="#10B981"/>
+                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#0F172A"/>
+                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="#10B981"/>
+                </StackPanel.Resources>
+                <Button Content="📊  Dashboard" Click="NavDashboard_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="📜  Access Logs" Click="NavAccessControl_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="📈  General Reports" Click="NavReports_Click" Style="{StaticResource ActiveSidebarButtonStyle}"/>
+                <Button Content="📜  System Logs" Click="NavLogs_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="👥  Receptionists" Click="NavReceptionists_Click" Style="{StaticResource SidebarButtonStyle}"/>
+                <Button Content="⚙️  Settings" Click="NavSettings_Click" Style="{StaticResource SidebarButtonStyle}"/>
+            </StackPanel>
+
+            <!-- Footer / Log Out -->
+            <StackPanel Grid.Row="2" Padding="12,0" Spacing="8">
+                <Rectangle Height="1" Fill="#1E293B" Margin="0,0,0,12"/>
+                <Button Content="🚪  Sign Out" Click="NavLogout_Click" Style="{StaticResource SidebarButtonStyle}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- MAIN CONTENT -->
+        <Grid Grid.Column="1">
+            <Grid.Resources>
+                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#059669"/>
+                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
+                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#047857"/>
+                <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
             <!-- Header -->
-            <TextBlock Text="Reports"
-                       FontSize="32"
-                       FontWeight="Bold"
-                       Foreground="#1F2937"/>
-
-            <!-- Statistics Cards -->
-            <Grid ColumnSpacing="12">
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Card 1 -->
-                <Border Grid.Column="0"
-                        Background="White"
-                        CornerRadius="10"
-                        Padding="15"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
-
-                    <StackPanel>
-
-                        <Ellipse Width="40"
-                                 Height="40"
-                                 Fill="#2563EB"/>
-
-                        <TextBlock Text="Total Clients"
-                                   Margin="0,10,0,0"
-                                   FontSize="13"
-                                   Foreground="#6B7280"/>
-
-                        <TextBlock Text="0"
-                                   FontSize="28"
-                                   FontWeight="Bold"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Card 2 -->
-                <Border Grid.Column="1"
-                        Background="White"
-                        CornerRadius="10"
-                        Padding="15"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
-
-                    <StackPanel>
-
-                        <Ellipse Width="40"
-                                 Height="40"
-                                 Fill="#16A34A"/>
-
-                        <TextBlock Text="Active Clients"
-                                   Margin="0,10,0,0"
-                                   FontSize="13"
-                                   Foreground="#6B7280"/>
-
-                        <TextBlock Text="0"
-                                   FontSize="28"
-                                   FontWeight="Bold"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Card 3 -->
-                <Border Grid.Column="2"
-                        Background="White"
-                        CornerRadius="10"
-                        Padding="15"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
-
-                    <StackPanel>
-
-                        <Ellipse Width="40"
-                                 Height="40"
-                                 Fill="#EF4444"/>
-
-                        <TextBlock Text="Deleted Clients"
-                                   Margin="0,10,0,0"
-                                   FontSize="13"
-                                   Foreground="#6B7280"/>
-
-                        <TextBlock Text="0"
-                                   FontSize="28"
-                                   FontWeight="Bold"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Card 4 -->
-                <Border Grid.Column="3"
-                        Background="White"
-                        CornerRadius="10"
-                        Padding="15"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
-
-                    <StackPanel>
-
-                        <Ellipse Width="40"
-                                 Height="40"
-                                 Fill="#9333EA"/>
-
-                        <TextBlock Text="Today's Accesses"
-                                   Margin="0,10,0,0"
-                                   FontSize="13"
-                                   Foreground="#6B7280"/>
-
-                        <TextBlock Text="0"
-                                   FontSize="28"
-                                   FontWeight="Bold"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Card 5 -->
-                <Border Grid.Column="4"
-                        Background="White"
-                        CornerRadius="10"
-                        Padding="15"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
-
-                    <StackPanel>
-
-                        <Ellipse Width="40"
-                                 Height="40"
-                                 Fill="#EAB308"/>
-
-                        <TextBlock Text="Receptionists"
-                                   Margin="0,10,0,0"
-                                   FontSize="13"
-                                   Foreground="#6B7280"/>
-
-                        <TextBlock Text="0"
-                                   FontSize="28"
-                                   FontWeight="Bold"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Card 6 -->
-                <Border Grid.Column="5"
-                        Background="White"
-                        CornerRadius="10"
-                        Padding="15"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
-
-                    <StackPanel>
-
-                        <Ellipse Width="40"
-                                 Height="40"
-                                 Fill="#F97316"/>
-
-                        <TextBlock Text="Blocked Users"
-                                   Margin="0,10,0,0"
-                                   FontSize="13"
-                                   Foreground="#6B7280"/>
-
-                        <TextBlock Text="0"
-                                   FontSize="28"
-                                   FontWeight="Bold"
-                                   Foreground="#DC2626"/>
-                    </StackPanel>
-                </Border>
+            <Grid Grid.Row="0" Background="White" Padding="32,20" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="General Reports" FontSize="26" FontWeight="Bold" Foreground="#0F172A"/>
+                    <TextBlock Text="Generate system-wide analytics, filter visitor statistics and export audit documents" Foreground="#64748B" FontSize="13"/>
+                </StackPanel>
             </Grid>
 
-            <!-- Generate Report -->
-            <Border Background="White"
-                    CornerRadius="10"
-                    Padding="20"
-                    BorderBrush="#E5E7EB"
-                    BorderThickness="1">
-
-                <StackPanel Spacing="18">
-
-                    <TextBlock Text="Generate Report"
-                               FontSize="20"
-                               FontWeight="SemiBold"/>
-
-                    <Grid ColumnSpacing="12">
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                            <ColumnDefinition Width="2*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Report Type -->
-                        <StackPanel Grid.Column="0"
-                                    Spacing="5">
-
-                            <TextBlock Text="Report Type"
-                                       FontSize="13"/>
-
-                            <ComboBox Height="40"
-                                      SelectedIndex="0">
-
-                                <ComboBoxItem Content="Access Logs Report"/>
-                                <ComboBoxItem Content="Deleted Clients"/>
-                                <ComboBoxItem Content="Blocked Users"/>
-
-                            </ComboBox>
-                        </StackPanel>
-
-                        <!-- Start Date -->
-                        <StackPanel Grid.Column="1"
-                                    Spacing="5">
-
-                            <TextBlock Text="Start Date"
-                                       FontSize="13"/>
-
-                            <DatePicker Height="40"/>
-                        </StackPanel>
-
-                        <!-- End Date -->
-                        <StackPanel Grid.Column="2"
-                                    Spacing="5">
-
-                            <TextBlock Text="End Date"
-                                       FontSize="13"/>
-
-                            <DatePicker Height="40"/>
-                        </StackPanel>
-
-                        <!-- Floor -->
-                        <StackPanel Grid.Column="3"
-                                    Spacing="5">
-
-                            <TextBlock Text="Floor"
-                                       FontSize="13"/>
-
-                            <ComboBox Height="40"
-                                      SelectedIndex="0">
-
-                                <ComboBoxItem Content="All Floors"/>
-                                <ComboBoxItem Content="1st Floor"/>
-                                <ComboBoxItem Content="2nd Floor"/>
-                                <ComboBoxItem Content="3rd Floor"/>
-
-                            </ComboBox>
-                        </StackPanel>
-
-                        <!-- Generate Button -->
-                        <StackPanel Grid.Column="4"
-                                    VerticalAlignment="Bottom">
-
-                            <Button Content="Generate"
-                                    Height="40"
-                                    Background="#2563EB"
-                                    Foreground="White"/>
-                        </StackPanel>
-                    </Grid>
-
-                    <!-- Export Buttons -->
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Right"
-                                Spacing="10">
-
-                        <Button Content="Export PDF"
-                                Background="DarkGreen"
-                                Foreground="White"
-                                Padding="20,10"/>
-
-                        <Button Content="Export Excel"
-                                Background="DarkGreen"
-                                Foreground="White"
-                                Padding="20,10"/>
-                        <Button Content="viewSystem"
-                                Background="DarkGreen"
-                                Foreground="White"
-                                Padding="20,10"
-                                x:Name="SystemsLogsbtn" Click="SystemsLogsbtn_Click"/>
-                        <AppBarButton Icon="Back"
-                                  Label="Back"
-                                  Background="#2563EB"
-                                  Foreground="White"
-                                  x:Name="reportsBacktbtn" Click="reportsBacktbtn_Click"/>
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-
-            <!-- Report Results -->
-            <Border Background="White"
-                    CornerRadius="10"
-                    Padding="20"
-                    BorderBrush="#E5E7EB"
-                    BorderThickness="1">
-
-                <StackPanel Spacing="15">
-
-                    <TextBlock Text="Report Results"
-                               FontSize="20"
-                               FontWeight="SemiBold"/>
-
-                    <!-- Table Header -->
-                    <Grid Background="#F3F4F6"
-                          Padding="12">
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Text="Log ID"
-                                   FontWeight="Bold"/>
-
-                        <TextBlock Grid.Column="1"
-                                   Text="Client Name"
-                                   FontWeight="Bold"/>
-
-                        <TextBlock Grid.Column="2"
-                                   Text="Floor"
-                                   FontWeight="Bold"/>
-
-                        <TextBlock Grid.Column="3"
-                                   Text="Date"
-                                   FontWeight="Bold"/>
-
-                        <TextBlock Grid.Column="4"
-                                   Text="Time In"
-                                   FontWeight="Bold"/>
-
-                        <TextBlock Grid.Column="5"
-                                   Text="Time Out"
-                                   FontWeight="Bold"/>
-
-                        <TextBlock Grid.Column="6"
-                                   Text="Status"
-                                   FontWeight="Bold"/>
-                    </Grid>
-
-                    <!-- Rows -->
-                    <ListView>
-
-
-
-                    </ListView>
-
-                    <!-- Footer -->
-                    <Grid Margin="0,10,0,0">
-
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Padding="32" Spacing="24">
+                    <!-- Statistics Cards Grid -->
+                    <Grid ColumnSpacing="16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="Showing 1 to 5 of 142 entries"
-                                   VerticalAlignment="Center"
-                                   Foreground="#6B7280"/>
+                        <!-- Card 1 -->
+                        <Border Grid.Column="0" Background="White" CornerRadius="12" Padding="16" BorderBrush="#E2E8F0" BorderThickness="1">
+                            <StackPanel Spacing="10">
+                                <Ellipse Width="32" Height="32" Fill="#EFF6FF" HorizontalAlignment="Left"/>
+                                <TextBlock Text="Total Clients" FontSize="12" Foreground="#64748B" FontWeight="SemiBold"/>
+                                <TextBlock Text="142" FontSize="24" FontWeight="Bold" Foreground="#0F172A"/>
+                            </StackPanel>
+                        </Border>
 
-                        <!-- Pagination -->
-                        <StackPanel Grid.Column="1"
-                                    Orientation="Horizontal"
-                                    Spacing="6">
+                        <!-- Card 2 -->
+                        <Border Grid.Column="1" Background="White" CornerRadius="12" Padding="16" BorderBrush="#E2E8F0" BorderThickness="1">
+                            <StackPanel Spacing="10">
+                                <Ellipse Width="32" Height="32" Fill="#ECFDF5" HorizontalAlignment="Left"/>
+                                <TextBlock Text="Active Clients" FontSize="12" Foreground="#64748B" FontWeight="SemiBold"/>
+                                <TextBlock Text="128" FontSize="24" FontWeight="Bold" Foreground="#047857"/>
+                            </StackPanel>
+                        </Border>
 
-                            <Button Content="&lt;"
-                                    Width="35"
-                                    Height="35"/>
+                        <!-- Card 3 -->
+                        <Border Grid.Column="2" Background="White" CornerRadius="12" Padding="16" BorderBrush="#E2E8F0" BorderThickness="1">
+                            <StackPanel Spacing="10">
+                                <Ellipse Width="32" Height="32" Fill="#FEF2F2" HorizontalAlignment="Left"/>
+                                <TextBlock Text="Deleted Clients" FontSize="12" Foreground="#64748B" FontWeight="SemiBold"/>
+                                <TextBlock Text="14" FontSize="24" FontWeight="Bold" Foreground="#DC2626"/>
+                            </StackPanel>
+                        </Border>
 
-                            <Button Content="1"
-                                    Width="35"
-                                    Height="35"
-                                    Background="#2563EB"
-                                    Foreground="White"/>
+                        <!-- Card 4 -->
+                        <Border Grid.Column="3" Background="White" CornerRadius="12" Padding="16" BorderBrush="#E2E8F0" BorderThickness="1">
+                            <StackPanel Spacing="10">
+                                <Ellipse Width="32" Height="32" Fill="#F5F3FF" HorizontalAlignment="Left"/>
+                                <TextBlock Text="Today's Logins" FontSize="12" Foreground="#64748B" FontWeight="SemiBold"/>
+                                <TextBlock Text="36" FontSize="24" FontWeight="Bold" Foreground="#6D28D9"/>
+                            </StackPanel>
+                        </Border>
 
-                            <Button Content="2"
-                                    Width="35"
-                                    Height="35"/>
+                        <!-- Card 5 -->
+                        <Border Grid.Column="4" Background="White" CornerRadius="12" Padding="16" BorderBrush="#E2E8F0" BorderThickness="1">
+                            <StackPanel Spacing="10">
+                                <Ellipse Width="32" Height="32" Fill="#FEF9C3" HorizontalAlignment="Left"/>
+                                <TextBlock Text="Receptionists" FontSize="12" Foreground="#64748B" FontWeight="SemiBold"/>
+                                <TextBlock Text="3" FontSize="24" FontWeight="Bold" Foreground="#854D0E"/>
+                            </StackPanel>
+                        </Border>
 
-                            <Button Content="3"
-                                    Width="35"
-                                    Height="35"/>
-
-                            <Button Content="4"
-                                    Width="35"
-                                    Height="35"/>
-
-                            <Button Content="5"
-                                    Width="35"
-                                    Height="35"/>
-
-                            <Button Content="&gt;"
-                                    Width="35"
-                                    Height="35"/>
-                        </StackPanel>
+                        <!-- Card 6 -->
+                        <Border Grid.Column="5" Background="White" CornerRadius="12" Padding="16" BorderBrush="#E2E8F0" BorderThickness="1">
+                            <StackPanel Spacing="10">
+                                <Ellipse Width="32" Height="32" Fill="#FEF2F2" HorizontalAlignment="Left"/>
+                                <TextBlock Text="Blocked Users" FontSize="12" Foreground="#64748B" FontWeight="SemiBold"/>
+                                <TextBlock Text="1" FontSize="24" FontWeight="Bold" Foreground="#DC2626"/>
+                            </StackPanel>
+                        </Border>
                     </Grid>
+
+                    <!-- Generate Report Filters -->
+                    <Border Background="White" CornerRadius="12" Padding="24" BorderBrush="#E2E8F0" BorderThickness="1">
+                        <StackPanel Spacing="20">
+                            <TextBlock Text="Configure Report Scope" FontSize="18" FontWeight="Bold" Foreground="#0F172A"/>
+
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Report Type -->
+                                <StackPanel Grid.Column="0" Spacing="6">
+                                    <TextBlock Text="Report Type" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <ComboBox Height="40" SelectedIndex="0" HorizontalAlignment="Stretch" CornerRadius="8" BorderBrush="#CBD5E1" Foreground="Black">
+                                        <ComboBoxItem Content="Access Logs Report" Foreground="Black"/>
+                                        <ComboBoxItem Content="Deleted Clients" Foreground="Black"/>
+                                        <ComboBoxItem Content="Blocked Users" Foreground="Black"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <!-- Start Date -->
+                                <StackPanel Grid.Column="1" Spacing="6">
+                                    <TextBlock Text="Start Date" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <DatePicker Height="40" HorizontalAlignment="Stretch" CornerRadius="8" BorderBrush="#CBD5E1"/>
+                                </StackPanel>
+
+                                <!-- End Date -->
+                                <StackPanel Grid.Column="2" Spacing="6">
+                                    <TextBlock Text="End Date" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <DatePicker Height="40" HorizontalAlignment="Stretch" CornerRadius="8" BorderBrush="#CBD5E1"/>
+                                </StackPanel>
+
+                                <!-- Floor -->
+                                <StackPanel Grid.Column="3" Spacing="6">
+                                    <TextBlock Text="Floor Target" FontSize="12" FontWeight="SemiBold" Foreground="#475569"/>
+                                    <ComboBox Height="40" SelectedIndex="0" HorizontalAlignment="Stretch" CornerRadius="8" BorderBrush="#CBD5E1" Foreground="Black">
+                                        <ComboBoxItem Content="All Floors" Foreground="Black"/>
+                                        <ComboBoxItem Content="1st Floor" Foreground="Black"/>
+                                        <ComboBoxItem Content="2nd Floor" Foreground="Black"/>
+                                        <ComboBoxItem Content="3rd Floor" Foreground="Black"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <!-- Generate Button -->
+                                <StackPanel Grid.Column="4" VerticalAlignment="Bottom">
+                                    <Button Content="⚡ Generate Report" Height="40" Background="#059669" Foreground="White" FontWeight="Bold" CornerRadius="8" HorizontalAlignment="Stretch"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Export Buttons -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12" Margin="0,10,0,0">
+                                <Button Content="📄 Export PDF" Background="#1E293B" Foreground="White" Padding="20,10" Height="40" CornerRadius="8"/>
+                                <Button Content="📊 Export Excel" Background="#1E293B" Foreground="White" Padding="20,10" Height="40" CornerRadius="8"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Report Results Table -->
+                    <Border Background="White" CornerRadius="12" Padding="24" BorderBrush="#E2E8F0" BorderThickness="1">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="Generated Data Matrix" FontSize="18" FontWeight="Bold" Foreground="#0F172A"/>
+
+                            <!-- Table Header -->
+                            <Grid Background="#F8FAFC" Padding="16,12" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                    <ColumnDefinition Width="1.5*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="LOG ID" FontWeight="Bold" FontSize="11" Foreground="#475569"/>
+                                <TextBlock Grid.Column="1" Text="CLIENT NAME" FontWeight="Bold" FontSize="11" Foreground="#475569"/>
+                                <TextBlock Grid.Column="2" Text="FLOOR TARGET" FontWeight="Bold" FontSize="11" Foreground="#475569"/>
+                                <TextBlock Grid.Column="3" Text="ACCESS DATE" FontWeight="Bold" FontSize="11" Foreground="#475569"/>
+                                <TextBlock Grid.Column="4" Text="TIME IN" FontWeight="Bold" FontSize="11" Foreground="#475569"/>
+                                <TextBlock Grid.Column="5" Text="TIME OUT" FontWeight="Bold" FontSize="11" Foreground="#475569"/>
+                                <TextBlock Grid.Column="6" Text="STATUS" FontWeight="Bold" FontSize="11" Foreground="#475569"/>
+                            </Grid>
+
+                            <!-- Placeholder for Rows -->
+                            <ListView SelectionMode="None">
+                                <!-- Future data binding target -->
+                            </ListView>
+
+                            <!-- Footer pagination -->
+                            <Grid Margin="0,16,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Showing 0 to 0 of 0 logs generated" VerticalAlignment="Center" Foreground="#64748B" FontSize="13"/>
+
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                                    <Button Content="&lt;" Width="36" Height="36" CornerRadius="8"/>
+                                    <Button Content="1" Width="36" Height="36" Background="#059669" Foreground="White" CornerRadius="8"/>
+                                    <Button Content="&gt;" Width="36" Height="36" CornerRadius="8"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
-            </Border>
-        </StackPanel>
-    </ScrollViewer>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
 </Page>

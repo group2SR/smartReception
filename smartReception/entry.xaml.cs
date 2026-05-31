@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Http;
@@ -44,7 +44,7 @@ namespace smartReception
             await LoadClientsAsync();
         }
 
-        // ── LOAD ───────────────────────────────────────────────────────────
+        // â”€â”€ LOAD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private async Task LoadClientsAsync()
         {
@@ -106,7 +106,7 @@ namespace smartReception
             }
         }
 
-        // ── SAVE (INSERT or UPDATE) ────────────────────────────────────────
+        // â”€â”€ SAVE (INSERT or UPDATE) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private async void btnSave_Click(object sender, RoutedEventArgs e)
         {
@@ -161,7 +161,7 @@ namespace smartReception
 
                 if (_editingClientId.HasValue)
                 {
-                    // ── UPDATE existing client ─────────────────────────────
+                    // â”€â”€ UPDATE existing client â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     string url = App.SupabaseUrl +
                                  "/rest/v1/client?client_id=eq." + _editingClientId.Value;
 
@@ -182,7 +182,7 @@ namespace smartReception
                 }
                 else
                 {
-                    // ── INSERT new client and get back the new client_id ───
+                    // â”€â”€ INSERT new client and get back the new client_id â”€â”€â”€
                     string url = App.SupabaseUrl + "/rest/v1/client";
                     var request = new HttpRequestMessage(HttpMethod.Post, url)
                     {
@@ -198,7 +198,7 @@ namespace smartReception
                         throw new Exception(err);
                     }
 
-                    // ── Parse the new client_id from the response ──────────
+                    // â”€â”€ Parse the new client_id from the response â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     string responseJson = await response.Content.ReadAsStringAsync();
                     int newClientId = 0;
 
@@ -212,7 +212,7 @@ namespace smartReception
                         newClientId = GetInt(inserted, "client_id");
                     }
 
-                    // ── Auto sign-in: create access_log entry ──────────────
+                    // â”€â”€ Auto sign-in: create access_log entry â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     if (newClientId > 0)
                     {
                         await CreateAccessLogAsync(newClientId);
@@ -231,7 +231,7 @@ namespace smartReception
             }
         }
 
-        // ── AUTO SIGN-IN ───────────────────────────────────────────────────
+        // â”€â”€ AUTO SIGN-IN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private async Task CreateAccessLogAsync(int clientId)
         {
@@ -259,7 +259,7 @@ namespace smartReception
                 if (!logResponse.IsSuccessStatusCode)
                 {
                     string err = await logResponse.Content.ReadAsStringAsync();
-                    // Don't block the user — just log the warning
+                    // Don't block the user â€” just log the warning
                     System.Diagnostics.Debug.WriteLine("Access log creation failed: " + err);
                 }
             }
@@ -269,7 +269,7 @@ namespace smartReception
             }
         }
 
-        // ── EDIT ───────────────────────────────────────────────────────────
+        // â”€â”€ EDIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private void btnEdit_Click(object sender, RoutedEventArgs e)
         {
@@ -297,7 +297,7 @@ namespace smartReception
             }
         }
 
-        // ── DELETE ─────────────────────────────────────────────────────────
+        // â”€â”€ DELETE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private async void btnDelete_Click(object sender, RoutedEventArgs e)
         {
@@ -323,7 +323,7 @@ namespace smartReception
             }
         }
 
-        // ── HELPERS ────────────────────────────────────────────────────────
+        // â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private void ClearForm()
         {
@@ -361,7 +361,7 @@ namespace smartReception
                 ? v.GetInt32() : (int?)null;
         }
 
-        // ── NAVIGATION ─────────────────────────────────────────────────────
+        // â”€â”€ NAVIGATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private void generalreportsbtn_Click(object sender, RoutedEventArgs e)
         {
@@ -370,7 +370,58 @@ namespace smartReception
 
         private void backbtnentry_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(MasterDashboard));
+            if (Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
+            else
+            {
+                Frame.Navigate(typeof(dashboard));
+            }
+        }
+
+        private void NavDashboard_Click(object sender, RoutedEventArgs e)
+        {
+            if (Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
+            else
+            {
+                Frame.Navigate(typeof(dashboard));
+            }
+        }
+
+        private void NavRegister_Click(object sender, RoutedEventArgs e)
+        {
+            // Already on register clients page
+        }
+
+
+
+        private void NavReports_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Reports));
+        }
+
+        private void NavLogs_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SystemLogs));
+        }
+
+        private void NavReceptionists_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(UsersReceptionist));
+        }
+
+        private void NavSettings_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Settings));
+        }
+
+        private void NavLogout_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(LogOut));
         }
     }
 }

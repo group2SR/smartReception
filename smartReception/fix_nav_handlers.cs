@@ -1,43 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+using System.Text.RegularExpressions;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
-namespace smartReception
+class Program
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class SystemLogs : Page
+    static void Main()
     {
-        public SystemLogs()
-        {
-            this.InitializeComponent();
-        }
+        string basePath = @"c:\Users\bridg\source\repos\group2SR\smartReception\smartReception\";
+        string[] files = { "Access_Control.xaml.cs", "Reports.xaml.cs", "SystemLogs.xaml.cs", "UsersReceptionist.xaml.cs", "Settings.xaml.cs" };
 
-        private void createreceptionistbtn_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(UsersReceptionist));
-        }
-
-        private void systemlogs_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(Reports));
-        }
-
-        private void NavDashboard_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        string replacement = @"private void NavDashboard_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             if (this.GetType() == typeof(dashboard)) return;
             Frame.Navigate(typeof(dashboard));
@@ -76,6 +48,19 @@ namespace smartReception
         private void NavLogout_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             Frame.Navigate(typeof(LogOut));
+        }";
+
+        foreach (string file in files)
+        {
+            string path = Path.Combine(basePath, file);
+            if (!File.Exists(path)) continue;
+            
+            string content = File.ReadAllText(path);
+            content = Regex.Replace(content, @"(?s)private void NavDashboard_Click.*NavLogout_Click[^{]*{[^}]*}", replacement);
+            
+            File.WriteAllText(path, content, System.Text.Encoding.UTF8);
         }
+
+        Console.WriteLine("Codebehinds Fixed!");
     }
 }
