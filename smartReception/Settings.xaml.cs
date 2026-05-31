@@ -240,22 +240,93 @@ namespace smartReception
                 throw new Exception(await response.Content.ReadAsStringAsync());
         }
 
+        // Adding receptionist 
+
+        private async Task PostAsync(string path, object payload)
+{
+    string body = JsonSerializer.Serialize(payload);
+    HttpResponseMessage response =
+        await _http.PostAsync(
+            App.SupabaseUrl + path,
+            new StringContent(
+                body,
+                Encoding.UTF8,
+                "application/json"));
+    if (!response.IsSuccessStatusCode)
+        throw new Exception(
+            await response.Content.ReadAsStringAsync());
+}
         private async Task ShowMessageAsync(string message)
         {
             await new MessageDialog(message, "Smart Reception").ShowAsync();
         }
-
         private static string GetStr(JsonElement el, string prop)
         {
             return el.TryGetProperty(prop, out JsonElement v) && v.ValueKind != JsonValueKind.Null
                 ? v.GetString() : null;
         }
-
         private static int GetInt(JsonElement el, string prop)
         {
             return el.TryGetProperty(prop, out JsonElement v) && v.ValueKind == JsonValueKind.Number
                 ? v.GetInt32() : 0;
         }
+        private async void BtnAddReceptionist_Click(
+    object sender,
+    RoutedEventArgs e)
+{
+    string firstName =
+        TxtReceptionFirstName.Text.Trim();
+    string lastName =
+        TxtReceptionLastName.Text.Trim();
+    string username =
+        TxtReceptionUsername.Text.Trim();
+    string password =
+        PwdReceptionPassword.Password;
+    if (string.IsNullOrWhiteSpace(firstName))
+    {
+        await ShowMessageAsync(
+            "First Name is required.");
+        return;
+    }
+    if (string.IsNullOrWhiteSpace(username))
+    {
+        await ShowMessageAsync(
+            "Username is required.");
+        return;
+    }
+    if (string.IsNullOrWhiteSpace(password))
+    {
+        await ShowMessageAsync(
+            "Password is required.");
+        return;
+    }
+    try
+    {
+        await PostAsync(
+            "/rest/v1/system_users",
+            new
+            {
+                first_name = firstName,
+                last_name = lastName,
+                username = username,
+                password_hash = HashPassword(password),
+                // Receptionist Role
+                role_id = 2
+            });
+        TxtReceptionFirstName.Text = "";
+        TxtReceptionLastName.Text = "";
+        TxtReceptionUsername.Text = "";
+        PwdReceptionPassword.Password = "";
+        await ShowMessageAsync(
+            "Receptionist added successfully.");
+    }
+    catch (Exception ex)
+    {
+        await ShowMessageAsync(
+            "Failed to create receptionist: "
+            + ex.Message);
+    }
+}
 
         // ── NAVIGATION ─────────────────────────────────────────────────────
 
