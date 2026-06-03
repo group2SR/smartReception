@@ -94,17 +94,20 @@
     <Compile Include="MasterDashboard.xaml.cs">
       <DependentUpon>MasterDashboard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="reception.xaml.cs">
       <DependentUpon>reception.xaml</DependentUpon>
     </Compile>
     <Compile Include="RegisterViewModel.cs" />
+    <Compile Include="Reportrow.cs" />
     <Compile Include="Reports.xaml.cs">
       <DependentUpon>Reports.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SystemLogModel.cs" />
     <Compile Include="SystemLogs.xaml.cs">
       <DependentUpon>SystemLogs.xaml</DependentUpon>
     </Compile>
@@ -189,6 +192,12 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="ClosedXML.DP">
+      <Version>0.95.3.31</Version>
+    </PackageReference>
+    <PackageReference Include="iTextSharp.LGPLv2.Core">
+      <Version>3.7.12</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
     </PackageReference>

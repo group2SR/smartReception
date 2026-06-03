@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
@@ -11,9 +11,15 @@ namespace smartReception
 {
     sealed partial class App : Application
     {
+        // ── Session state ──────────────────────────────────────────────────
+        public static int CurrentUserId { get; set; }
+        public static string CurrentUserFullName { get; set; }
+
+        // ── Supabase ───────────────────────────────────────────────────────
         public static Supabase.Client SupabaseClient { get; private set; }
         public const string SupabaseUrl = "https://zwlczsvsixuiycficjjg.supabase.co";
         public const string SupabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3bGN6c3ZzaXh1aXljZmljampnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5ODUzNjcsImV4cCI6MjA5MzU2MTM2N30.olF3cnXlrR-cCa9i2wUn-_kxkCNX6IAInEjaw0-PN0w";
+
         private static Task _supabaseInitializationTask;
 
         public App()
@@ -26,9 +32,7 @@ namespace smartReception
         public static async Task EnsureSupabaseInitializedAsync()
         {
             if (_supabaseInitializationTask == null)
-            {
                 _supabaseInitializationTask = InitializeSupabaseAsync();
-            }
 
             await _supabaseInitializationTask;
         }
@@ -37,7 +41,6 @@ namespace smartReception
         {
             try
             {
-
                 var options = new SupabaseOptions
                 {
                     AutoRefreshToken = true,
@@ -68,8 +71,7 @@ namespace smartReception
                 if (rootFrame.Content == null)
                 {
                     await EnsureSupabaseInitializedAsync();
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
-
+                    rootFrame.Navigate(typeof(entry), e.Arguments);
                 }
                 Window.Current.Activate();
             }

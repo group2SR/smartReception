@@ -1,4 +1,9 @@
-using System;
+﻿using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -17,35 +22,35 @@ namespace smartReception
 
         private void Grid_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            // Suppress transition for a "snappy" professional feel
             Frame.Navigate(typeof(reception), null, new SuppressNavigationTransitionInfo());
         }
 
         private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            // 1. Change cursor to Hand (Fixes the need for the XAML Cursor attribute)
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Hand, 0);
+            Window.Current.CoreWindow.PointerCursor =
+                new CoreCursor(CoreCursorType.Hand, 0);
 
-            // 2. Visual feedback: Subtle Opacity and Background shift
             if (sender is Grid card)
             {
                 card.Opacity = 0.9;
-                card.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 241, 245, 249));
-                card.BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129));
+                card.Background = new SolidColorBrush(
+                    Windows.UI.Color.FromArgb(255, 241, 245, 249));
+                card.BorderBrush = new SolidColorBrush(
+                    Windows.UI.Color.FromArgb(255, 16, 185, 129));
             }
         }
 
         private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            // 1. Reset cursor to Arrow
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
+            Window.Current.CoreWindow.PointerCursor =
+                new CoreCursor(CoreCursorType.Arrow, 0);
 
-            // 2. Reset visual feedback
             if (sender is Grid card)
             {
                 card.Opacity = 1.0;
                 card.Background = new SolidColorBrush(Windows.UI.Colors.White);
-                card.BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 226, 232, 240));
+                card.BorderBrush = new SolidColorBrush(
+                    Windows.UI.Color.FromArgb(255, 226, 232, 240));
             }
         }
 
@@ -53,8 +58,8 @@ namespace smartReception
         {
             using (var sha = System.Security.Cryptography.SHA256.Create())
             {
-                byte[] bytes = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                var sb = new System.Text.StringBuilder();
+                byte[] bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
+                var sb = new StringBuilder();
                 foreach (byte b in bytes) sb.Append(b.ToString("x2"));
                 return sb.ToString();
             }
@@ -76,14 +81,24 @@ namespace smartReception
 
             try
             {
-                using (var http = new System.Net.Http.HttpClient())
+                await App.EnsureSupabaseInitializedAsync();
+
+                using (var http = new HttpClient())
                 {
                     http.DefaultRequestHeaders.Add("apikey", App.SupabaseAnonKey);
-                    http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", App.SupabaseAnonKey);
+                    http.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue("Bearer", App.SupabaseAnonKey);
                     http.DefaultRequestHeaders.Add("Accept", "application/json");
 
                     string hashedPwd = HashPassword(password);
-                    string url = $"{App.SupabaseUrl}/rest/v1/system_users?username=eq.{username}&password_hash=eq.{hashedPwd}&role_id=eq.1&select=is_blocked";
+
+                    // FIX: also select user_id, first_name, last_name so we can
+                    // store the session and write the Login log
+                    string url = $"{App.SupabaseUrl}/rest/v1/system_users" +
+                                 $"?username=eq.{username}" +
+                                 $"&password_hash=eq.{hashedPwd}" +
+                                 $"&role_id=eq.1" +
+                                 $"&select=user_id,first_name,last_name,is_blocked";
 
                     var response = await http.GetAsync(url);
                     string json = await response.Content.ReadAsStringAsync();
@@ -94,19 +109,35 @@ namespace smartReception
                         return;
                     }
 
-                    using (var doc = System.Text.Json.JsonDocument.Parse(json))
+                    using (var doc = JsonDocument.Parse(json))
                     {
                         if (doc.RootElement.GetArrayLength() > 0)
                         {
                             var user = doc.RootElement[0];
-                            if (user.TryGetProperty("is_blocked", out var blockedProp) && blockedProp.GetBoolean())
+
+                            if (user.TryGetProperty("is_blocked", out var blockedProp)
+                                && blockedProp.GetBoolean())
                             {
                                 comment.Text = "Your admin account is blocked.";
+                                return;
                             }
-                            else
-                            {
-                                Frame.Navigate(typeof(dashboard));
-                            }
+
+                            // ── Store session ──────────────────────────────
+                            int userId = user.GetProperty("user_id").GetInt32();
+                            string firstName = user.GetProperty("first_name").GetString() ?? "";
+                            string lastName = user.GetProperty("last_name").GetString() ?? "";
+                            string fullName = (firstName + " " + lastName).Trim();
+
+                            App.CurrentUserId = userId;
+                            App.CurrentUserFullName = fullName;
+
+                            // ── Write Login log ────────────────────────────
+                            await InsertSystemLogAsync(
+                                http, userId,
+                                "Login",
+                                fullName + " signed in");
+
+                            Frame.Navigate(typeof(dashboard));
                         }
                         else
                         {
@@ -122,6 +153,38 @@ namespace smartReception
             finally
             {
                 adminloginbtn.IsEnabled = true;
+            }
+        }
+
+        // ── Shared log writer ──────────────────────────────────────────────
+        private static async Task InsertSystemLogAsync(
+            HttpClient http,
+            int userId,
+            string activity,
+            string description)
+        {
+            try
+            {
+                string url = App.SupabaseUrl + "/rest/v1/system_logs";
+                var body = JsonSerializer.Serialize(new
+                {
+                    user_id = userId,
+                    activity = activity,
+                    description = description,
+                    log_date = DateTimeOffset.UtcNow.ToString("O")
+                });
+
+                var request = new HttpRequestMessage(HttpMethod.Post, url)
+                {
+                    Content = new StringContent(body, Encoding.UTF8, "application/json")
+                };
+                request.Headers.Add("Prefer", "return=minimal");
+
+                await http.SendAsync(request);
+            }
+            catch
+            {
+                // Never crash the app over a log write failure
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
@@ -21,10 +22,6 @@ namespace smartReception
         private const int AdminRoleId = 1;
         private int _adminUserId = -1;
 
-        // Named controls we need — add x:Name to your XAML to match these
-        // TxtAdminFullName, TxtAdminUsername, TxtAdminEmail
-        // PwdCurrent, PwdNew, PwdConfirm
-
         public Settings()
         {
             this.InitializeComponent();
@@ -42,7 +39,7 @@ namespace smartReception
             await LoadAdminAsync();
         }
 
-        // ── LOAD admin account ─────────────────────────────────────────────
+        // ── LOAD admin account + check cap ────────────────────────────────────
 
         private async Task LoadAdminAsync()
         {
@@ -76,6 +73,9 @@ namespace smartReception
                         TxtAdminUsername.Text = username;
                     }
                 }
+
+                // Check admin count and update the Create Admin card accordingly
+                await RefreshAdminCapAsync();
             }
             catch (Exception ex)
             {
@@ -83,7 +83,45 @@ namespace smartReception
             }
         }
 
-        // ── SAVE admin account details ─────────────────────────────────────
+        // ── CHECK admin count and toggle Create Admin card ────────────────────
+
+        private async Task RefreshAdminCapAsync()
+        {
+            try
+            {
+                string url = App.SupabaseUrl +
+                             "/rest/v1/system_users" +
+                             "?select=user_id" +
+                             "&role_id=eq." + AdminRoleId;
+
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                request.Headers.Add("Prefer", "count=exact");
+                HttpResponseMessage response = await _http.SendAsync(request);
+
+                int adminCount = 0;
+
+                // Supabase returns the count in the Content-Range header: "0-N/TOTAL"
+                if (response.Headers.TryGetValues("Content-Range", out IEnumerable<string> values))
+                {
+                    string contentRange = values.FirstOrDefault() ?? "";
+                    int slashIdx = contentRange.IndexOf('/');
+                    if (slashIdx >= 0 && int.TryParse(contentRange.Substring(slashIdx + 1), out int total))
+                        adminCount = total;
+                }
+
+                bool atCap = adminCount >= 2;
+
+                AdminCapBanner.Visibility = atCap ? Visibility.Visible : Visibility.Collapsed;
+                CreateAdminForm.Visibility = atCap ? Visibility.Collapsed : Visibility.Visible;
+                BtnCreateAdmin.IsEnabled = !atCap;
+            }
+            catch
+            {
+                // Non-fatal — leave the form visible so the user can still attempt a create
+            }
+        }
+
+        // ── SAVE admin account details ─────────────────────────────────────────
 
         private async void BtnSaveAccount_Click(object sender, RoutedEventArgs e)
         {
@@ -131,7 +169,7 @@ namespace smartReception
             }
         }
 
-        // ── CHANGE PASSWORD ────────────────────────────────────────────────
+        // ── CHANGE PASSWORD ────────────────────────────────────────────────────
 
         private async void BtnUpdatePassword_Click(object sender, RoutedEventArgs e)
         {
@@ -214,7 +252,139 @@ namespace smartReception
             }
         }
 
-        // ── HELPERS ────────────────────────────────────────────────────────
+        // ── CREATE NEW ADMIN ACCOUNT ───────────────────────────────────────────
+
+        private async void BtnCreateAdmin_Click(object sender, RoutedEventArgs e)
+        {
+            string firstName = TxtNewAdminFirstName.Text.Trim();
+            string lastName = TxtNewAdminLastName.Text.Trim();
+            string username = TxtNewAdminUsername.Text.Trim();
+            string password = PwdNewAdmin.Password;
+
+            // Basic validation
+            if (string.IsNullOrEmpty(firstName))
+            {
+                await ShowMessageAsync("First Name is required.");
+                return;
+            }
+            if (string.IsNullOrEmpty(username))
+            {
+                await ShowMessageAsync("Username is required.");
+                return;
+            }
+            if (string.IsNullOrEmpty(password))
+            {
+                await ShowMessageAsync("Password is required.");
+                return;
+            }
+            if (password.Length < 6)
+            {
+                await ShowMessageAsync("Password must be at least 6 characters.");
+                return;
+            }
+
+            // Double-check the cap before inserting (server-side guard)
+            try
+            {
+                string countUrl = App.SupabaseUrl +
+                                  "/rest/v1/system_users" +
+                                  "?select=user_id" +
+                                  "&role_id=eq." + AdminRoleId;
+
+                var countReq = new HttpRequestMessage(HttpMethod.Get, countUrl);
+                countReq.Headers.Add("Prefer", "count=exact");
+                HttpResponseMessage countResp = await _http.SendAsync(countReq);
+
+                int adminCount = 0;
+                if (countResp.Headers.TryGetValues("Content-Range", out IEnumerable<string> vals))
+                {
+                    string cr = vals.FirstOrDefault() ?? "";
+                    int si = cr.IndexOf('/');
+                    if (si >= 0 && int.TryParse(cr.Substring(si + 1), out int total))
+                        adminCount = total;
+                }
+
+                if (adminCount >= 2)
+                {
+                    await ShowMessageAsync("Cannot create account: maximum of 2 admin accounts already reached.");
+                    await RefreshAdminCapAsync();
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowMessageAsync("Could not verify admin count: " + ex.Message);
+                return;
+            }
+
+            // Check the username is not already taken across ALL users (not just admins)
+            try
+            {
+                string checkUrl = App.SupabaseUrl +
+                                  "/rest/v1/system_users" +
+                                  "?select=user_id" +
+                                  "&username=eq." + Uri.EscapeDataString(username);
+
+                HttpResponseMessage checkResp = await _http.GetAsync(checkUrl);
+                string checkJson = await checkResp.Content.ReadAsStringAsync();
+
+                using (JsonDocument doc = JsonDocument.Parse(checkJson))
+                {
+                    if (doc.RootElement.ValueKind == JsonValueKind.Array &&
+                        doc.RootElement.GetArrayLength() > 0)
+                    {
+                        await ShowMessageAsync($"Username \"{username}\" is already taken. Please choose a different one.");
+                        return;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowMessageAsync("Username check failed: " + ex.Message);
+                return;
+            }
+
+            // Insert the new admin account
+            try
+            {
+                string body = JsonSerializer.Serialize(new Dictionary<string, object>
+                {
+                    ["first_name"] = firstName,
+                    ["last_name"] = lastName,
+                    ["username"] = username,
+                    ["password_hash"] = HashPassword(password),
+                    ["role_id"] = AdminRoleId
+                });
+
+                var request = new HttpRequestMessage(HttpMethod.Post,
+                    App.SupabaseUrl + "/rest/v1/system_users")
+                {
+                    Content = new StringContent(body, Encoding.UTF8, "application/json")
+                };
+                request.Headers.Add("Prefer", "return=minimal");
+
+                HttpResponseMessage response = await _http.SendAsync(request);
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception(await response.Content.ReadAsStringAsync());
+
+                // Clear the create form
+                TxtNewAdminFirstName.Text = "";
+                TxtNewAdminLastName.Text = "";
+                TxtNewAdminUsername.Text = "";
+                PwdNewAdmin.Password = "";
+
+                await ShowMessageAsync($"Admin account \"{username}\" created successfully. They can now sign in from the login page.");
+
+                // Refresh cap banner — will hide the form if we're now at 2
+                await RefreshAdminCapAsync();
+            }
+            catch (Exception ex)
+            {
+                await ShowMessageAsync("Failed to create admin account: " + ex.Message);
+            }
+        }
+
+        // ── HELPERS ────────────────────────────────────────────────────────────
 
         private static string HashPassword(string password)
         {
@@ -257,7 +427,7 @@ namespace smartReception
                 ? v.GetInt32() : 0;
         }
 
-        // ── NAVIGATION ─────────────────────────────────────────────────────
+        // ── NAVIGATION ─────────────────────────────────────────────────────────
 
         private void logoutbtn_Click(object sender, RoutedEventArgs e)
         {
@@ -269,43 +439,43 @@ namespace smartReception
             Frame.Navigate(typeof(UsersReceptionist));
         }
 
-        private void NavDashboard_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void NavDashboard_Click(object sender, RoutedEventArgs e)
         {
             if (this.GetType() == typeof(dashboard)) return;
             Frame.Navigate(typeof(dashboard));
         }
 
-        private void NavAccessControl_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void NavAccessControl_Click(object sender, RoutedEventArgs e)
         {
             if (this.GetType() == typeof(Access_Control)) return;
             Frame.Navigate(typeof(Access_Control));
         }
 
-        private void NavReports_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void NavReports_Click(object sender, RoutedEventArgs e)
         {
             if (this.GetType() == typeof(Reports)) return;
             Frame.Navigate(typeof(Reports));
         }
 
-        private void NavLogs_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void NavLogs_Click(object sender, RoutedEventArgs e)
         {
             if (this.GetType() == typeof(SystemLogs)) return;
             Frame.Navigate(typeof(SystemLogs));
         }
 
-        private void NavReceptionists_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void NavReceptionists_Click(object sender, RoutedEventArgs e)
         {
             if (this.GetType() == typeof(UsersReceptionist)) return;
             Frame.Navigate(typeof(UsersReceptionist));
         }
 
-        private void NavSettings_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void NavSettings_Click(object sender, RoutedEventArgs e)
         {
             if (this.GetType() == typeof(Settings)) return;
             Frame.Navigate(typeof(Settings));
         }
 
-        private void NavLogout_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void NavLogout_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(LogOut));
         }
