@@ -117,7 +117,7 @@ namespace smartReception
 
                 // Navigate to your actual Receptionist landing workspace page
                 // (Make sure to change 'ReceptionistDashboardPage' to match your actual page class name)
-                Frame.Navigate(typeof(dashboard));
+                Frame.Navigate(typeof(MasterDashboard));
             }
             else
             {
