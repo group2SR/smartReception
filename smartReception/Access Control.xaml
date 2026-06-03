@@ -1,0 +1,42 @@
+﻿<Page
+    x:Class="smartReception.Access_Control"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:smartReception"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Background="LightGreen">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Background="White"
+                Grid.Row="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+            <TextBlock Text="Access Control"
+                       FontSize="23"/>
+            <TextBlock Text="Validate and log client entries"
+                       FontWeight="Light"
+                       FontSize="18"/>
+            <Border Background="White"
+                    CornerRadius="5">
+                <StackPanel Background="Transparent">
+                    <TextBlock Text="Entry / Exit Log"
+                               FontSize="20"/>
+                    <Border BorderBrush="LightGray"
+                            BorderThickness="0,0,0,1"
+                            HorizontalAlignment="Stretch"
+                            Margin="20,10"/>
+                    
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+
+    </Grid>
+</Page>
