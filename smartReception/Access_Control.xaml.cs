@@ -34,10 +34,10 @@ namespace smartReception
         [Column("status")]
         public string Status { get; set; }
 
-        // Joined from client table — populated manually after fetch
         public string ClientName { get; set; }
         public string NIN { get; set; }
         public string Floor { get; set; }
+        public string PhoneNumber { get; set; }
         public string RowType => "Client";
 
         public string Date
@@ -45,9 +45,9 @@ namespace smartReception
             get
             {
                 if (string.IsNullOrEmpty(AccessDate)) return "-";
-                DateTime dt;
-                return DateTime.TryParse(AccessDate, out dt)
-                    ? dt.ToString("dd/MM/yyyy") : AccessDate;
+                if (DateTime.TryParse(AccessDate, out DateTime dt))
+                    return dt.ToString("dd/MM/yyyy");
+                return AccessDate;
             }
         }
 
@@ -98,15 +98,14 @@ namespace smartReception
 
         public string Status => string.IsNullOrEmpty(TimeOut) ? "Active" : "Completed";
 
-        public string Floor { get; set; } // populated after fetch
+        public string Floor { get; set; }
 
         public string Date
         {
             get
             {
                 if (string.IsNullOrEmpty(VisitDate)) return "-";
-                DateTime dt;
-                return DateTime.TryParse(VisitDate, out dt)
+                return DateTime.TryParse(VisitDate, out DateTime dt)
                     ? dt.ToString("dd/MM/yyyy") : VisitDate;
             }
         }
@@ -155,7 +154,6 @@ namespace smartReception
 
     public sealed partial class Access_Control : Page
     {
-        // Combined list of both AccessLog and VisitorLog displayed together
         private ObservableCollection<object> _allLogs = new ObservableCollection<object>();
         private ObservableCollection<object> _pagedLogs = new ObservableCollection<object>();
 
@@ -174,7 +172,7 @@ namespace smartReception
         public Access_Control()
         {
             this.InitializeComponent();
-            AccessLogsList.ItemsSource = _pagedLogs;
+            try { AccessLogsList.ItemsSource = _pagedLogs; } catch { }
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -187,31 +185,44 @@ namespace smartReception
         {
             try
             {
-                LoadingRing.IsActive = true;
-                LoadingRing.Visibility = Visibility.Visible;
-                EmptyState.Visibility = Visibility.Collapsed;
+                try
+                {
+                    LoadingRing.IsActive = true;
+                    LoadingRing.Visibility = Visibility.Visible;
+                }
+                catch { }
+
+                try { EmptyState.Visibility = Visibility.Collapsed; } catch { }
 
                 await App.EnsureSupabaseInitializedAsync();
 
                 if (App.SupabaseClient == null)
                     throw new Exception("Supabase client failed to initialize.");
 
-                string search = SearchBox.Text?.Trim() ?? "";
+                string search = "";
+                try { search = SearchBox.Text?.Trim() ?? ""; } catch { }
+
                 string floorVal = "";
-
-                if (FloorCombo.SelectedItem is ComboBoxItem floorItem)
+                try
                 {
-                    string v = floorItem.Content?.ToString() ?? "";
-                    if (!string.IsNullOrEmpty(v) && v != "All Floors")
-                        floorVal = v;
+                    if (FloorCombo.SelectedItem is ComboBoxItem floorItem)
+                    {
+                        string v = floorItem.Content?.ToString() ?? "";
+                        if (!string.IsNullOrEmpty(v) && v != "All Floors")
+                            floorVal = v;
+                    }
                 }
+                catch { }
 
-                string dateFrom = DateFrom.Date.HasValue
-                    ? DateFrom.Date.Value.ToString("yyyy-MM-dd") : "";
-                string dateTo = DateTo.Date.HasValue
-                    ? DateTo.Date.Value.ToString("yyyy-MM-dd") : "";
+                string dateFrom = "";
+                string dateTo = "";
+                try
+                {
+                    dateFrom = DateFrom.Date.HasValue ? DateFrom.Date.Value.ToString("yyyy-MM-dd") : "";
+                    dateTo = DateTo.Date.HasValue ? DateTo.Date.Value.ToString("yyyy-MM-dd") : "";
+                }
+                catch { }
 
-                // ── Fetch client access logs ───────────────────────────────
                 Postgrest.Responses.ModeledResponse<AccessLog> clientResult;
 
                 if (!string.IsNullOrEmpty(dateFrom) && !string.IsNullOrEmpty(dateTo))
@@ -235,7 +246,6 @@ namespace smartReception
                         .Order("access_date", Postgrest.Constants.Ordering.Descending)
                         .Get();
 
-                // ── Fetch visitor logs ────────────────────────────────────
                 Postgrest.Responses.ModeledResponse<VisitorLog> visitorResult;
 
                 if (!string.IsNullOrEmpty(dateFrom) && !string.IsNullOrEmpty(dateTo))
@@ -259,16 +269,16 @@ namespace smartReception
                         .Order("visit_date", Postgrest.Constants.Ordering.Descending)
                         .Get();
 
-                // ── Build client lookup map ───────────────────────────────
                 var clientsResult = await App.SupabaseClient.From<Visitor>().Get();
                 var clientMap = new Dictionary<int, Visitor>();
                 if (clientsResult?.Models != null)
+                {
                     foreach (Visitor c in clientsResult.Models)
                         clientMap[c.Id] = c;
+                }
 
                 _allLogs.Clear();
 
-                // ── Process client access logs ────────────────────────────
                 if (clientResult?.Models != null)
                 {
                     foreach (AccessLog log in clientResult.Models)
@@ -278,21 +288,22 @@ namespace smartReception
                             Visitor client = clientMap[log.ClientId];
                             log.ClientName = client.FullName;
                             log.NIN = client.NIN ?? "-";
-                            log.Floor = _floorMap.ContainsKey(client.FloorId)
-                                             ? _floorMap[client.FloorId] : "-";
+                            log.Floor = _floorMap.ContainsKey(client.FloorId) ? _floorMap[client.FloorId] : "-";
+                            log.PhoneNumber = client.PhoneNumber ?? "---";
                         }
                         else
                         {
                             log.ClientName = "Client #" + log.ClientId;
                             log.NIN = "-";
                             log.Floor = "-";
+                            log.PhoneNumber = "---";
                         }
 
                         if (!string.IsNullOrEmpty(search))
                         {
                             string s = search.ToLower();
-                            if (!log.ClientName.ToLower().Contains(s) &&
-                                !log.NIN.ToLower().Contains(s)) continue;
+                            if (!log.ClientName.ToLower().Contains(s) && !log.NIN.ToLower().Contains(s))
+                                continue;
                         }
 
                         if (!string.IsNullOrEmpty(floorVal) && log.Floor != floorVal)
@@ -302,19 +313,17 @@ namespace smartReception
                     }
                 }
 
-                // ── Process visitor logs ──────────────────────────────────
                 if (visitorResult?.Models != null)
                 {
                     foreach (VisitorLog log in visitorResult.Models)
                     {
-                        log.Floor = _floorMap.ContainsKey(log.FloorId)
-                                    ? _floorMap[log.FloorId] : "-";
+                        log.Floor = _floorMap.ContainsKey(log.FloorId) ? _floorMap[log.FloorId] : "-";
 
                         if (!string.IsNullOrEmpty(search))
                         {
                             string s = search.ToLower();
-                            if (!log.ClientName.ToLower().Contains(s) &&
-                                !(log.NIN ?? "").ToLower().Contains(s)) continue;
+                            if (!log.ClientName.ToLower().Contains(s) && !(log.NIN ?? "").ToLower().Contains(s))
+                                continue;
                         }
 
                         if (!string.IsNullOrEmpty(floorVal) && log.Floor != floorVal)
@@ -330,18 +339,16 @@ namespace smartReception
             }
             catch (Exception ex)
             {
-                ContentDialog dialog = new ContentDialog
-                {
-                    Title = "Error loading logs",
-                    Content = ex.Message,
-                    CloseButtonText = "OK"
-                };
-                await dialog.ShowAsync();
+                await ShowMessageAsync("Error loading logs", ex.Message);
             }
             finally
             {
-                LoadingRing.IsActive = false;
-                LoadingRing.Visibility = Visibility.Collapsed;
+                try
+                {
+                    LoadingRing.IsActive = false;
+                    LoadingRing.Visibility = Visibility.Collapsed;
+                }
+                catch { }
             }
         }
 
@@ -350,8 +357,7 @@ namespace smartReception
             var all = new List<object>(_allLogs);
             _totalEntries = all.Count;
 
-            int totalPages = _totalEntries == 0
-                ? 1 : (int)Math.Ceiling(_totalEntries / (double)PAGE_SIZE);
+            int totalPages = _totalEntries == 0 ? 1 : (int)Math.Ceiling(_totalEntries / (double)PAGE_SIZE);
 
             if (_currentPage < 1) _currentPage = 1;
             if (_currentPage > totalPages) _currentPage = totalPages;
@@ -365,34 +371,39 @@ namespace smartReception
 
             int from = _totalEntries == 0 ? 0 : skip + 1;
             int to = Math.Min(_currentPage * PAGE_SIZE, _totalEntries);
-            EntriesLabel.Text = "Showing " + from + " to " + to
-                              + " of " + _totalEntries + " entries";
 
-            EmptyState.Visibility = _pagedLogs.Count == 0
-                ? Visibility.Visible : Visibility.Collapsed;
+            string paginationMsg = $"Showing {from} to {to} of {_totalEntries} entries";
+
+            try { EntriesLabel.Text = paginationMsg; } catch { }
+
+            try { EmptyState.Visibility = _pagedLogs.Count == 0 ? Visibility.Visible : Visibility.Collapsed; } catch { }
 
             BuildPaginationButtons(totalPages);
         }
 
         private void BuildPaginationButtons(int totalPages)
         {
-            PaginationPanel.Children.Clear();
+            try
+            {
+                PaginationPanel.Children.Clear();
+                AddPagerButton("‹", _currentPage > 1, _currentPage - 1);
 
-            AddPagerButton("‹", _currentPage > 1, _currentPage - 1);
+                int start = Math.Max(1, _currentPage - 2);
+                int end = Math.Min(totalPages, start + 4);
 
-            int start = Math.Max(1, _currentPage - 2);
-            int end = Math.Min(totalPages, start + 4);
+                for (int p = start; p <= end; p++)
+                    AddPagerButton(p.ToString(), p != _currentPage, p);
 
-            for (int p = start; p <= end; p++)
-                AddPagerButton(p.ToString(), p != _currentPage, p);
-
-            AddPagerButton("›", _currentPage < totalPages, _currentPage + 1);
+                AddPagerButton("›", _currentPage < totalPages, _currentPage + 1);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Pagination Error: " + ex.Message);
+            }
         }
 
         private void AddPagerButton(string label, bool enabled, int targetPage)
         {
-            bool isActive = label == _currentPage.ToString();
-
             Button btn = new Button
             {
                 Content = label,
@@ -405,6 +416,7 @@ namespace smartReception
                 Tag = targetPage
             };
 
+            bool isActive = label == _currentPage.ToString();
             if (isActive)
             {
                 btn.Background = new SolidColorBrush(Color.FromArgb(255, 0, 102, 226));
@@ -425,7 +437,7 @@ namespace smartReception
                 RefreshPage();
             };
 
-            PaginationPanel.Children.Add(btn);
+            try { PaginationPanel.Children.Add(btn); } catch { }
         }
 
         private async void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -433,33 +445,100 @@ namespace smartReception
             await LoadLogsAsync();
         }
 
-        // ── NAVIGATION ────────────────────────────────────────────────────────
+        private void AccessLogsList_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            UpdateDetailsCard(e.ClickedItem);
+        }
 
-        private void receptionistlogoutbtn_Click(object sender, RoutedEventArgs e)
-        { Frame.Navigate(typeof(LogOut)); }
+        private void UpdateDetailsCard(object item)
+        {
+            try
+            {
+                try { CardPhone.Text = "---"; } catch { }
+                try { CardFloor.Text = "---"; } catch { }
+                try { CardNIN.Text = "---"; } catch { }
+                try { CardDateValue.Text = "---"; } catch { }
 
-        private void receptionaccesbackbtn_Click(object sender, RoutedEventArgs e)
-        { Frame.Navigate(typeof(dashboard)); }
+                if (item is AccessLog clientLog)
+                {
+                    try { CardFloor.Text = !string.IsNullOrEmpty(clientLog.Floor) ? clientLog.Floor : "---"; } catch { }
+                    try { CardNIN.Text = !string.IsNullOrEmpty(clientLog.NIN) ? clientLog.NIN : "---"; } catch { }
+                    try { CardPhone.Text = !string.IsNullOrEmpty(clientLog.PhoneNumber) ? clientLog.PhoneNumber : "---"; } catch { }
+                    try { CardDateLabel.Text = "Checked In Timestamp"; } catch { }
+                    try
+                    {
+                        CardDateValue.Text = !string.IsNullOrEmpty(clientLog.TimeOut)
+                            ? $"{clientLog.Date} ({clientLog.TimeIn} - {clientLog.TimeOut})"
+                            : $"{clientLog.Date} @ {clientLog.TimeIn} (Active)";
+                    }
+                    catch { }
+                }
+                else if (item is VisitorLog visitorLog)
+                {
+                    try { CardFloor.Text = !string.IsNullOrEmpty(visitorLog.Floor) ? visitorLog.Floor : "---"; } catch { }
+                    try { CardNIN.Text = !string.IsNullOrEmpty(visitorLog.NIN) ? visitorLog.NIN : "---"; } catch { }
+                    try { CardPhone.Text = "N/A (Walk-in)"; } catch { }
+                    try { CardDateLabel.Text = "Visitor Entrance"; } catch { }
+                    try
+                    {
+                        CardDateValue.Text = !string.IsNullOrEmpty(visitorLog.TimeOut)
+                            ? $"{visitorLog.Date} ({visitorLog.TimeIn} - {visitorLog.TimeOut})"
+                            : $"{visitorLog.Date} @ {visitorLog.TimeIn} (Inside)";
+                    }
+                    catch { }
+                }
+            }
+            catch { }
+        }
+
+        private async System.Threading.Tasks.Task ShowMessageAsync(string title, string content)
+        {
+            try
+            {
+                ContentDialog dialog = new ContentDialog
+                {
+                    Title = title,
+                    Content = content,
+                    CloseButtonText = "OK"
+                };
+                await dialog.ShowAsync();
+            }
+            catch { }
+        }
 
         private void NavDashboard_Click(object sender, RoutedEventArgs e)
-        { if (GetType() != typeof(dashboard)) Frame.Navigate(typeof(dashboard)); }
+        {
+            if (this.GetType() != typeof(dashboard)) Frame.Navigate(typeof(dashboard));
+        }
 
         private void NavAccessControl_Click(object sender, RoutedEventArgs e)
-        { if (GetType() != typeof(Access_Control)) Frame.Navigate(typeof(Access_Control)); }
+        {
+            if (this.GetType() != typeof(Access_Control)) Frame.Navigate(typeof(Access_Control));
+        }
 
         private void NavReports_Click(object sender, RoutedEventArgs e)
-        { if (GetType() != typeof(Reports)) Frame.Navigate(typeof(Reports)); }
+        {
+            if (this.GetType() != typeof(Reports)) Frame.Navigate(typeof(Reports));
+        }
 
         private void NavLogs_Click(object sender, RoutedEventArgs e)
-        { if (GetType() != typeof(SystemLogs)) Frame.Navigate(typeof(SystemLogs)); }
+        {
+            if (this.GetType() != typeof(SystemLogs)) Frame.Navigate(typeof(SystemLogs));
+        }
 
         private void NavReceptionists_Click(object sender, RoutedEventArgs e)
-        { if (GetType() != typeof(UsersReceptionist)) Frame.Navigate(typeof(UsersReceptionist)); }
+        {
+            if (this.GetType() != typeof(UsersReceptionist)) Frame.Navigate(typeof(UsersReceptionist));
+        }
 
         private void NavSettings_Click(object sender, RoutedEventArgs e)
-        { if (GetType() != typeof(Settings)) Frame.Navigate(typeof(Settings)); }
+        {
+            if (this.GetType() != typeof(Settings)) Frame.Navigate(typeof(Settings));
+        }
 
         private void NavLogout_Click(object sender, RoutedEventArgs e)
-        { Frame.Navigate(typeof(LogOut)); }
+        {
+            Frame.Navigate(typeof(LogOut));
+        }
     }
 }
